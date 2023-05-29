@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_snc_ide.AppSetDefaults</api_name>
+        <caller_access>1</caller_access>
+        <client_callable>false</client_callable>
+        <description>Sets all system properties to default values.</description>
+        <name>AppSetDefaults</name>
+        <script><![CDATA[function AppSetDefaults()
+{
+	AppSetProperty('active','true');
+	AppSetProperty('logging.verbosity','info');
+}
+]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2023-05-28 11:00:26</sys_created_on>
+        <sys_id>7d29cf4e1b8b6510cd6153d16b4bcb0a</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>AppSetDefaults</sys_name>
+        <sys_package display_value="IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
+        <sys_update_name>sys_script_include_7d29cf4e1b8b6510cd6153d16b4bcb0a</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2023-05-29 08:15:31</sys_updated_on>
+    </sys_script_include>
+</record_update>
