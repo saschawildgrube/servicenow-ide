@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description>Allows to select an existing apps or to create a new one.</description>
+        <global>false</global>
+        <ignore_in_now_experience>false</ignore_in_now_experience>
+        <name>x_snc_ide.IDEAppSelectorController</name>
+        <script><![CDATA[class IDEAppSelectorController extends ReactorComponent
+{
+	constructor(props)
+	{
+		super(props);
+		this.state = { scope: this.props.scope };
+		//this.onClick = this.onClick.bind(this);
+	}
+
+	/*
+	componentDidMount()
+	{
+	}
+
+	componentWillUnmount()
+	{
+	}
+	*/
+
+	/*
+	onClick()
+	{
+		this.setState( {clicked: true} );
+		if (typeof this.props.callbackOnClick == 'function')
+		{
+			this.props.callbackOnClick();
+		}
+		else if (this.props.text != '')
+		{
+			DoModalMessage('New Reactor component',this.props.text);
+		}
+		else
+		{
+			DoModalMessage('New Reactor component','The button was clicked!');
+		}
+	}
+	*/
+
+	render()
+	{
+		return e('div',
+			{
+				//onClick: this.onClick
+			},
+			'AppSelectorController');	
+	}	
+}]]></script>
+        <script_name>IDEAppSelectorController</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2023-05-29 17:35:03</sys_created_on>
+        <sys_id>77aca1e21b03e510cd6153d16b4bcb9c</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>x_snc_ide.IDEAppSelectorController</sys_name>
+        <sys_package display_value="IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
+        <sys_update_name>sys_ui_script_77aca1e21b03e510cd6153d16b4bcb9c</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2023-05-29 17:46:12</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

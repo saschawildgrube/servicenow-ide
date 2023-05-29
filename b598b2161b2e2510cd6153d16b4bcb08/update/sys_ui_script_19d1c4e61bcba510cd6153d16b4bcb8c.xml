@@ -10,7 +10,18 @@
 	constructor(props)
 	{
 		super(props);
-		this.state = { scope: this.props.scope };
+		var strApp = GetStringValue(this.props.app);
+		var strState = 'select';
+		
+		if (strApp != '')
+		{
+			strState = 'edit';
+		}
+		
+		this.state = {
+			state: strState,
+			app: strApp
+		};
 		//this.onClick = this.onClick.bind(this);
 	}
 
@@ -43,17 +54,22 @@
 
 	render()
 	{
-		var strScope = GetStringValue(this.state.scope);
+		var strState = GetStringValue(this.state.state);
+		var strApp = GetStringValue(this.state.app);
+		
+
 		
 		var components = [];
 		
-		if (strScope == '')
+		
+		if (strState == 'select')
 		{
-			components.push(e(WarningMessage,{ text: 'No scope selected.'}));
+			//components.push(e(WarningMessage,{ text: 'No app selected.'}));
+			components.push(e(IDEAppSelectorController,{}));
 		}
 		else
 		{
-			components.push(e(InfoMessage,{ text: 'Scope is "'+strScope+'"'}));
+			components.push(e(InfoMessage,{ text: 'App is "'+strApp+'"'}));
 		}
 		return e(Fullscreen,
 			{
@@ -66,14 +82,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-29 09:47:59</sys_created_on>
         <sys_id>19d1c4e61bcba510cd6153d16b4bcb8c</sys_id>
-        <sys_mod_count>8</sys_mod_count>
+        <sys_mod_count>14</sys_mod_count>
         <sys_name>x_snc_ide.IDEController</sys_name>
         <sys_package display_value="IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_ui_script_19d1c4e61bcba510cd6153d16b4bcb8c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2023-05-29 16:05:10</sys_updated_on>
+        <sys_updated_on>2023-05-29 17:54:05</sys_updated_on>
         <ui_type>0</ui_type>
         <use_scoped_format>false</use_scoped_format>
     </sys_ui_script>
