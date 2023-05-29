@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description>The main IDE App.</description>
+        <global>false</global>
+        <ignore_in_now_experience>false</ignore_in_now_experience>
+        <name>x_snc_ide.IDEApp</name>
+        <script><![CDATA[class IDEApp extends ReactorComponent
+{
+	constructor(props)
+	{
+		super(props);
+	}
+	
+	render()
+	{
+		var strScope = GetParameter('scope');
+		return e(IDEController,
+			{
+				scope: strScope
+			});
+			
+	}	
+}]]></script>
+        <script_name>IDEApp</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2023-05-29 09:44:53</sys_created_on>
+        <sys_id>754104e61bcba510cd6153d16b4bcb1f</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>x_snc_ide.IDEApp</sys_name>
+        <sys_package display_value="IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
+        <sys_update_name>sys_ui_script_754104e61bcba510cd6153d16b4bcb1f</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2023-05-29 09:50:53</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>
