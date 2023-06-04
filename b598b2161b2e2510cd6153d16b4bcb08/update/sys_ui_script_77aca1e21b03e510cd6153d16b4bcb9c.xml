@@ -11,66 +11,75 @@
 	{
 		super(props);
 		this.state = {
-			scope: this.props.scope,
+			app: this.props.app,
 			apps: null
 		};
 		this.onServerRequestGetApps = this.onServerRequestGetApps.bind(this);
-		//this.onClick = this.onClick.bind(this);
+		this.onClickSelectApp = this.onClickSelectApp.bind(this);
 	}
 	
 	onServerRequestGetApps(response)
 	{
 		Log('onServerRequestGetApps');
-		DoModalMessage('Hello',response);
 		this.setState(
 			{
 				apps: response
 			}
 		);
 	}	
-
-	/*
-	componentDidMount()
+	
+	onClickSelectApp()
 	{
-	}
-
-	componentWillUnmount()
-	{
-	}
-	*/
-
-	/*
-	onClick()
-	{
-		this.setState( {clicked: true} );
-		if (typeof this.props.callbackOnClick == 'function')
+		var strAppSysId = GetStringValue(event.target.attributes.value.value);
+		if (typeof this.props.callbackSelectApp == 'function')
 		{
-			this.props.callbackOnClick();
-		}
-		else if (this.props.text != '')
-		{
-			DoModalMessage('New Reactor component',this.props.text);
-		}
-		else
-		{
-			DoModalMessage('New Reactor component','The button was clicked!');
-		}
+			this.props.callbackSelectApp(strAppSysId);
+		}	
 	}
-	*/
 
 	render()
 	{
-		if (this.state.apps == null)
+		var aApps = GetArrayValue(this.state.apps);
+		if (aApps.length == 0)
 		{
 			ServerRequest('x_snc_ide.IDEClientAPI','GetApps',{ },this.onServerRequestGetApps);
 			return e(Waiting,{ text: 'Loading Apps...' });
 		}
 		
-		return e('div',
+		var aRows = [];
+		
+		var aHeaders = [
 			{
-				//onClick: this.onClick
+				header: true,
+				content: 'Name'
 			},
-			'AppSelectorController');	
+			{
+				header: true,
+				content: 'Scope'
+			}
+		];
+		aRows.push(aHeaders);
+		
+		for (var nApp = 0; nApp < aApps.length; nApp++)
+		{
+			var app = aApps[nApp];
+			var elementLink = e('a',
+				{
+					onClick: this.onClickSelectApp,
+					value: app.sys_id
+				},
+				app.name_clean + ' ' + app.version);
+			
+			var aCells = [
+				{ content: elementLink },
+				{ content: app.scope }
+			];
+
+			
+			aRows.push(aCells);
+		}
+		
+		return e(TableComponent,{ cells: aRows, classname: 'ide_app_selector' },null);
 	}	
 }]]></script>
         <script_name>IDEAppSelectorController</script_name>
@@ -78,14 +87,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-29 17:35:03</sys_created_on>
         <sys_id>77aca1e21b03e510cd6153d16b4bcb9c</sys_id>
-        <sys_mod_count>12</sys_mod_count>
+        <sys_mod_count>24</sys_mod_count>
         <sys_name>x_snc_ide.IDEAppSelectorController</sys_name>
         <sys_package display_value="IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_ui_script_77aca1e21b03e510cd6153d16b4bcb9c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2023-06-03 11:35:39</sys_updated_on>
+        <sys_updated_on>2023-06-04 17:52:59</sys_updated_on>
         <ui_type>0</ui_type>
         <use_scoped_format>false</use_scoped_format>
     </sys_ui_script>
