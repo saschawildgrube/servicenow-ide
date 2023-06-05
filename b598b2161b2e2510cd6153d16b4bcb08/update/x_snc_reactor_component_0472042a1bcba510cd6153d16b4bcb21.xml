@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_reactor_component">
     <x_snc_reactor_component action="INSERT_OR_UPDATE">
         <content_css/>
-        <dependencies>099c24e61b4fa510cd6153d16b4bcb7a,59aa28661b4fa510cd6153d16b4bcb38,f5d7d9261bcfa510cd6153d16b4bcb15,eb1de5e21b03e510cd6153d16b4bcb6b</dependencies>
+        <dependencies>099c24e61b4fa510cd6153d16b4bcb7a,59aa28661b4fa510cd6153d16b4bcb38,f5d7d9261bcfa510cd6153d16b4bcb15,eb1de5e21b03e510cd6153d16b4bcb6b,f5be6c2c97d36110a6a07767f053afa5</dependencies>
         <description>The IDE Controller React component. The IDE Controller component manages the overall state of the IDE, allows to select an app and keeps track on which app is displayed.</description>
         <jsx>false</jsx>
         <name>IDEController</name>
@@ -11,51 +11,47 @@
 	constructor(props)
 	{
 		super(props);
-		this.state = { scope: this.props.scope };
-		//this.onClick = this.onClick.bind(this);
+		var strApp = GetStringValue(this.props.app);
+		var strState = 'select';
+		
+		if (strApp != '')
+		{
+			strState = 'edit';
+		}
+		
+		this.state = {
+			state: strState,
+			app: strApp
+		};
+		this.callbackSelectApp = this.callbackSelectApp.bind(this);
 	}
 
-	componentDidMount()
+	callbackSelectApp(strAppSysId)
 	{
+		DoModalMessage('IDE','App has been selected: '+strAppSysId);
+		this.setState(
+			{
+				app: strAppSysId,
+				state: 'edit'
+			}
+		);
 	}
-
-	componentWillUnmount()
-	{
-	}
-
-	/*
-	onClick()
-	{
-		this.setState( {clicked: true} );
-		if (typeof this.props.callbackOnClick == 'function')
-		{
-			this.props.callbackOnClick();
-		}
-		else if (this.props.text != '')
-		{
-			DoModalMessage('New Reactor component',this.props.text);
-		}
-		else
-		{
-			DoModalMessage('New Reactor component','The button was clicked!');
-		}
-	}
-	*/
 
 	render()
 	{
-		var strScope = GetStringValue(this.state.scope);
+		var strState = GetStringValue(this.state.state);
+		var strApp = GetStringValue(this.state.app);
 		
 		var components = [];
 		
-		if (strScope == '')
+		
+		if (strState == 'select')
 		{
-			//components.push(e(WarningMessage,{ text: 'No scope selected.'}));
-			components.push(e(IDEScopeSelectorController,{}));
+			components.push(e(IDEAppSelectorController,{ callbackSelectApp: this.callbackSelectApp }));
 		}
 		else
 		{
-			components.push(e(InfoMessage,{ text: 'Scope is "'+strScope+'"'}));
+			components.push(e(InfoMessage,{ text: 'App is "'+strApp+'"'}));
 		}
 		return e(Fullscreen,
 			{
@@ -68,14 +64,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-29 09:49:32</sys_created_on>
         <sys_id>0472042a1bcba510cd6153d16b4bcb21</sys_id>
-        <sys_mod_count>4</sys_mod_count>
+        <sys_mod_count>5</sys_mod_count>
         <sys_name>IDEController</sys_name>
         <sys_package display_value="IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>x_snc_reactor_component_0472042a1bcba510cd6153d16b4bcb21</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2023-05-29 17:46:57</sys_updated_on>
+        <sys_updated_on>2023-06-04 18:12:06</sys_updated_on>
         <type>script</type>
         <ui_script display_value="x_snc_ide.IDEController">19d1c4e61bcba510cd6153d16b4bcb8c</ui_script>
         <url/>
