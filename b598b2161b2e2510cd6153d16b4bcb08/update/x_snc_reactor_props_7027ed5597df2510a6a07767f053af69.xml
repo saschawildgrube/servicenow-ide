@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_reactor_props">
+    <x_snc_reactor_props action="INSERT_OR_UPDATE">
+        <component display_value="IDEController">0472042a1bcba510cd6153d16b4bcb21</component>
+        <description>Optional property that identified the application to start with. If the property is not set, the IDE starts with the application selection screen.</description>
+        <mandatory>false</mandatory>
+        <name>app_id</name>
+        <sys_class_name>x_snc_reactor_props</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2023-06-07 06:13:08</sys_created_on>
+        <sys_id>7027ed5597df2510a6a07767f053af69</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>app_id</sys_name>
+        <sys_package display_value="IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
+        <sys_update_name>x_snc_reactor_props_7027ed5597df2510a6a07767f053af69</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2023-06-07 06:13:08</sys_updated_on>
+        <type>string</type>
+    </x_snc_reactor_props>
+</record_update>

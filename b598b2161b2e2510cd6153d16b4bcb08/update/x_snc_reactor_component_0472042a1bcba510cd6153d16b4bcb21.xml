@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_reactor_component">
     <x_snc_reactor_component action="INSERT_OR_UPDATE">
         <content_css/>
-        <dependencies>099c24e61b4fa510cd6153d16b4bcb7a,59aa28661b4fa510cd6153d16b4bcb38,f5d7d9261bcfa510cd6153d16b4bcb15,eb1de5e21b03e510cd6153d16b4bcb6b,f5be6c2c97d36110a6a07767f053afa5</dependencies>
+        <dependencies>099c24e61b4fa510cd6153d16b4bcb7a,59aa28661b4fa510cd6153d16b4bcb38,f5d7d9261bcfa510cd6153d16b4bcb15,eb1de5e21b03e510cd6153d16b4bcb6b,f5be6c2c97d36110a6a07767f053afa5,9861d5311bd7e110cd6153d16b4bcb73,95aa25b11b1be110cd6153d16b4bcb0f,acf063451b1469905b76777d8b4bcbb2</dependencies>
         <description>The IDE Controller React component. The IDE Controller component manages the overall state of the IDE, allows to select an app and keeps track on which app is displayed.</description>
         <jsx>false</jsx>
         <name>IDEController</name>
@@ -11,52 +11,130 @@
 	constructor(props)
 	{
 		super(props);
-		var strApp = GetStringValue(this.props.app);
+		var strAppId = GetStringValue(this.props.app_id);
 		var strState = 'select';
-		
-		if (strApp != '')
+				
+		if (strAppId != '')
 		{
 			strState = 'edit';
 		}
 		
 		this.state = {
 			state: strState,
-			app: strApp
+			app_id: strAppId,
+			app_data: null
 		};
 		this.callbackSelectApp = this.callbackSelectApp.bind(this);
+		this.onServerRequestGetAppData = this.onServerRequestGetAppData.bind(this);
+
+		this.callbackToolBar = this.callbackToolBar.bind(this);
 	}
 
 	callbackSelectApp(strAppSysId)
 	{
-		DoModalMessage('IDE','App has been selected: '+strAppSysId);
+		if (this.state.app_id == strAppSysId)
+		{
+			this.setState(
+				{
+					state: 'edit'
+				});
+			return;
+		}
 		this.setState(
 			{
-				app: strAppSysId,
+				app_data: null,
+				app_id: strAppSysId,
 				state: 'edit'
+			});
+	}
+	
+	onServerRequestGetAppData(appdata)
+	{
+		this.setState(
+			{
+				state: 'edit',
+				app_data: appdata
 			}
 		);
 	}
 
+	callbackToolBar(strValue)
+	{
+		if (strValue == 'app_select')
+		{
+			this.setState(
+				{
+					state: 'select'
+				});
+			return;
+		}
+		if (strValue == 'file_create')
+		{
+			DoModalMessage('IDE','TODO: A file is to be created...',function(){});
+			return;
+		}
+	}
+	
+	
 	render()
 	{
 		var strState = GetStringValue(this.state.state);
-		var strApp = GetStringValue(this.state.app);
+		var strAppId = GetStringValue(this.state.app_id);
+		var appdata = this.state.app_data;
 		
-		var components = [];
+		if (strAppId == '')
+		{
+			strState = 'select';
+		}
+		if (strState == 'edit')
+		{
+			if (IsObject(appdata) == false)
+			{
+				strState = 'loading';
+			}
+		}
 		
 		
 		if (strState == 'select')
 		{
-			components.push(e(IDEAppSelectorController,{ callbackSelectApp: this.callbackSelectApp }));
+			return e(Fullscreen,{},e(Centered,{},e(IDEAppSelectorController,{ app_id: strAppId, callbackSelectApp: this.callbackSelectApp })));			
 		}
-		else
+		else if (strState == 'loading')
 		{
-			components.push(e(InfoMessage,{ text: 'App is "'+strApp+'"'}));
+			ServerRequest('x_snc_ide.IDEClientAPI','GetAppData',{ app_id: strAppId },this.onServerRequestGetAppData);
+			return e(Fullscreen,{},e(Centered,{},e(Waiting,{ text: 'Loading App...' })));
 		}
-		return e(Fullscreen,
-			{
-			},
-			components);
+		else if (strState == 'edit')
+		{
+			var tools = [];
+			tools.push({
+					text: 'Load App',
+					icon: 'folder-open',
+					value: 'app_select'
+				});
+			tools.push({
+					text: 'Create Application File',
+					icon: 'plus-circle',
+					value: 'file_create'
+				});
+
+
+			var strStatus = appdata.name_clean + ' ' + appdata.version;
+
+			var workspace = e(Workspace,{
+				logo: e('span',{ style: { fontWeight: 'bold', fontSize: '16px'} },'ServiceNow IDE'),
+				menu: 'MENU',
+				user: 'USER',
+				toolbar: e(ToolBar, { tools: tools, callbackOnClick: this.callbackToolBar }),
+				navigation: 'NAVIGATION',
+				content: 'CONTENT',
+				sidebar: 'SIDEBAR',
+				status: strStatus 
+			});
+
+			return workspace;
+		}
+		return e(ErrorMessage,{},'ERROR: INVALID STATE');
 	}	
 }]]></script>
         <source_type>ui_script</source_type>
@@ -64,14 +142,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-29 09:49:32</sys_created_on>
         <sys_id>0472042a1bcba510cd6153d16b4bcb21</sys_id>
-        <sys_mod_count>5</sys_mod_count>
+        <sys_mod_count>8</sys_mod_count>
         <sys_name>IDEController</sys_name>
         <sys_package display_value="IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>x_snc_reactor_component_0472042a1bcba510cd6153d16b4bcb21</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2023-06-04 18:12:06</sys_updated_on>
+        <sys_updated_on>2023-06-08 21:08:56</sys_updated_on>
         <type>script</type>
         <ui_script display_value="x_snc_ide.IDEController">19d1c4e61bcba510cd6153d16b4bcb8c</ui_script>
         <url/>

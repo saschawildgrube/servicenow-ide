@@ -2,12 +2,12 @@
     <sys_script_include action="INSERT_OR_UPDATE">
         <access>package_private</access>
         <active>true</active>
-        <api_name>x_snc_ide.GetApp</api_name>
+        <api_name>x_snc_ide.GetAppData</api_name>
         <caller_access/>
         <client_callable>false</client_callable>
         <description>Returns an objects representing the given application including an array of objects representing the sys_metadata records.</description>
-        <name>GetApp</name>
-        <script><![CDATA[function GetApp(vApp)
+        <name>GetAppData</name>
+        <script><![CDATA[function GetAppData(vApp)
 {
 	var GetAppRecord = x_snc_devtools.GetAppRecord;
 	var Clone = x_snc_devtools.Clone;
@@ -21,7 +21,9 @@
 		return false;
 	}
 	
-	var app = Clone(grApp);
+	var appdata = Clone(grApp);
+	
+	appdata.name_clean = GetCleanAppName(appdata.name);
 	
 	var aMetaData = [];
 	
@@ -31,7 +33,8 @@
 		'sys_restricted_caller_access',
 		'sys_dictionary',
 		'sys_atf_test_suite_test',
-		'sys_atf_step'
+		'sys_atf_step',
+		'sys_security_acl_role'
 		];
 	
 	var grMetaData = new GlideRecord('sys_metadata');
@@ -51,21 +54,21 @@
 		delete metadata.sys_update_name;
 		aMetaData.push(metadata);
 	}
-	app._metadata = aMetaData; 
+	appdata._metadata = aMetaData; 
 
-	return app;
+	return appdata;
 }]]></script>
         <sys_class_name>sys_script_include</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-06-03 10:19:49</sys_created_on>
         <sys_id>9169bd0c975bed10a6a07767f053af85</sys_id>
-        <sys_mod_count>11</sys_mod_count>
-        <sys_name>GetApp</sys_name>
+        <sys_mod_count>18</sys_mod_count>
+        <sys_name>GetAppData</sys_name>
         <sys_package display_value="IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_script_include_9169bd0c975bed10a6a07767f053af85</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2023-06-03 10:57:48</sys_updated_on>
+        <sys_updated_on>2023-06-07 06:10:34</sys_updated_on>
     </sys_script_include>
 </record_update>

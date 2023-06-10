@@ -10,56 +10,160 @@
 	constructor(props)
 	{
 		super(props);
-		var strApp = GetStringValue(this.props.app);
+		var strAppId = GetStringValue(this.props.app_id);
 		var strState = 'select';
-		
-		if (strApp != '')
+				
+		if (strAppId != '')
 		{
 			strState = 'edit';
 		}
 		
 		this.state = {
 			state: strState,
-			app: strApp
+			app_id: strAppId,
+			app_data: null
 		};
 		this.callbackSelectApp = this.callbackSelectApp.bind(this);
+		this.onServerRequestGetAppData = this.onServerRequestGetAppData.bind(this);
+
+		this.callbackToolBar = this.callbackToolBar.bind(this);
 	}
 
 	callbackSelectApp(strAppSysId)
 	{
-		//DoModalMessage('IDE','App has been selected: '+strAppSysId);
+		if (this.state.app_id == strAppSysId)
+		{
+			this.setState(
+				{
+					state: 'edit'
+				});
+			return;
+		}
 		this.setState(
 			{
-				app: strAppSysId,
+				app_data: null,
+				app_id: strAppSysId,
 				state: 'edit'
+			});
+	}
+	
+	onServerRequestGetAppData(appdata)
+	{
+		this.setState(
+			{
+				state: 'edit',
+				app_data: appdata
 			}
 		);
 	}
 
+	callbackToolBar(strValue)
+	{
+		if (strValue == 'app_select')
+		{
+			this.setState(
+				{
+					state: 'select'
+				});
+			return;
+		}
+		if (strValue == 'file_create')
+		{
+			DoModalMessage('IDE','TODO: A file is to be created...',function(){});
+			return;
+		}
+		if (strValue == 'error')
+		{
+			DoModalMessage('IDE','Provoking an error...',function(){});
+			this.setState(
+				{
+					state: 'error'
+				});			
+			return;
+		}
+
+	}
+	
+	
 	render()
 	{
 		var strState = GetStringValue(this.state.state);
-		var strApp = GetStringValue(this.state.app);
+		var strAppId = GetStringValue(this.state.app_id);
+		var appdata = this.state.app_data;
+		
+		if (strAppId == '')
+		{
+			strState = 'select';
+		}
+		if (strState == 'edit')
+		{
+			if (IsObject(appdata) == false)
+			{
+				strState = 'loading';
+			}
+		}
+		
 		
 		if (strState == 'select')
 		{
-			return e(Fullscreen,{},e(IDEAppSelectorController,{ app: strApp, callbackSelectApp: this.callbackSelectApp }));			
+			return e(Fullscreen,{},e(Centered,{},e(IDEAppSelectorController,{ app_id: strAppId, callbackSelectApp: this.callbackSelectApp })));			
 		}
-	
-		var strStatus = 'App is '+strApp;
+		else if (strState == 'loading')
+		{
+			ServerRequest('x_snc_ide.IDEClientAPI','GetAppData',{ app_id: strAppId },this.onServerRequestGetAppData);
+			return e(Fullscreen,{},e(Centered,{},e(Waiting,{ text: 'Loading App...' })));
+		}
+		else if (strState == 'edit')
+		{
+			
+			var strAppNameVersion = appdata.name + ' ' + appdata.version;
+					
+			
+			var logo = e('div',
+				{
+					style:
+					{
+						fontWeight: 'bold',
+						fontSize: '16px',
+						margin: '5px'
+					}
+				},
+				'ServiceNow IDE - ' + appdata.name_clean);
+			
+			
+			var tools = [];
+			tools.push({
+					text: 'Load App',
+					icon: 'folder-open',
+					value: 'app_select'
+				});
+			tools.push({
+					text: 'Create Application File',
+					icon: 'plus-circle',
+					value: 'file_create'
+				});
+			tools.push({
+					text: 'Provoke Error',
+					value: 'error'
+				});
 
-		var workspace = e(Workspace,{
-			logo: 'LOGO',
-			menu: 'MENU',
-			user: 'USER',
-			toolbar: 'TOOLBAR',
-			navigation: 'NAVIGATION',
-			content: 'CONTENT',
-			sidebar: 'SIDEBAR',
-			status: strStatus 
-		});
+			var strStatus = strAppNameVersion;		
+			var status = e('span',{},strStatus);
 
-		return workspace;
+			var workspace = e(Workspace,{
+				logo: logo,
+				menu: 'MENU',
+				user: 'USER',
+				toolbar: e(ToolBar, { tools: tools, callbackOnClick: this.callbackToolBar }),
+				navigation: 'NAVIGATION',
+				content: 'CONTENT',
+				sidebar: 'SIDEBAR',
+				status: status 
+			});
+
+			return workspace;
+		}
+		return e(ErrorMessage,{ text: 'ERROR: INVALID STATE' });
 	}	
 }]]></script>
         <script_name>IDEController</script_name>
@@ -67,14 +171,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-29 09:47:59</sys_created_on>
         <sys_id>19d1c4e61bcba510cd6153d16b4bcb8c</sys_id>
-        <sys_mod_count>27</sys_mod_count>
+        <sys_mod_count>57</sys_mod_count>
         <sys_name>x_snc_ide.IDEController</sys_name>
         <sys_package display_value="IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_ui_script_19d1c4e61bcba510cd6153d16b4bcb8c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2023-06-05 06:31:42</sys_updated_on>
+        <sys_updated_on>2023-06-10 11:44:50</sys_updated_on>
         <ui_type>0</ui_type>
         <use_scoped_format>false</use_scoped_format>
     </sys_ui_script>
