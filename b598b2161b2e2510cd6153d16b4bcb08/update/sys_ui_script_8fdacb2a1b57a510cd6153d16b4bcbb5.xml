@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description>The IDETreeNavigation component renders the IDE tree navigation based on the given app data object.</description>
+        <global>false</global>
+        <ignore_in_now_experience>false</ignore_in_now_experience>
+        <name>x_snc_ide.IDETreeNavigationController</name>
+        <script><![CDATA[class IDETreeNavigationController extends ReactorComponent
+{
+	constructor(props)
+	{
+		super(props);
+		this.onClick = this.onClick.bind(this);
+	}
+
+	onClick()
+	{
+		if (typeof this.props.callbackOnClick == 'function')
+		{
+			this.props.callbackOnClick();
+		}
+	}
+
+	render()
+	{
+		var appdata = this.props.appdata;
+		
+		var treenavigation = { items: [] };
+		
+		var tn_category = { label: 'By Category', items: [] };
+		//var tn_table = { label: 'By Table', items: [] };
+		var tn_all = { label: 'All', items: [] };
+		
+		var aFiles = GetValue(appdata,'_metadata');
+		
+		//var itemsByTables = {};
+		for (var nFile = 0; nFile < aFiles.length; nFile++)
+		{
+			var file = aFiles[nFile];
+
+			var strClassName = GetValue(file,'sys_class_name');
+			var strSysId = GetValue(file,'sys_id');
+			var strName = GetValue(file,'sys_name');
+			
+			// All
+			tn_all.items.push( { label: strName + ' ('+strClassName+')', value: strClassName+','+strSysId } );
+			
+			// By Table
+			//itemsByTables = SetValue(strName,strClassName,strSysId);
+		}
+		
+		/*
+		var aClassNames = GetKeys(itemsByTables);
+		aClassNames = aClassNames.sort();
+		for (var nClassName = 0; nClassName < aClassNames.length; nClassName)
+		{
+			var strClassName = aClassNames[nClassName];
+			var tn_files = { label: strClassName, items: [] };
+			var itemsByTable = itemsByTables[strClassName];
+			var aSysIds = GetKeys(itemsByTable);
+			for (var nSysId = 0; nSysId < aSysIds.length; nSysId++)
+			{
+				var strSysId = aSysIds[nSysId];
+				var strName = GetValue(itemsByTable,strSysId);
+				tn_files.items.push( { label: strName, value: strClassName+','+strSysId } );
+			}
+			tn_table.items.push( tn_files );
+		}
+		*/
+		
+		
+		
+		//treenavigation.items.push( tn_table );
+		treenavigation.items.push( tn_all );
+
+		
+		return e(IDETreeNavigation,
+			{
+				appdata: appdata,
+				callbackOnClick: this.props.callbackOnClick
+			});
+	}
+			
+		
+	}	
+}]]></script>
+        <script_name>IDETreeNavigationController</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2023-06-11 10:42:25</sys_created_on>
+        <sys_id>8fdacb2a1b57a510cd6153d16b4bcbb5</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_snc_ide.IDETreeNavigationController</sys_name>
+        <sys_package display_value="IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
+        <sys_update_name>sys_ui_script_8fdacb2a1b57a510cd6153d16b4bcbb5</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2023-06-11 10:45:27</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

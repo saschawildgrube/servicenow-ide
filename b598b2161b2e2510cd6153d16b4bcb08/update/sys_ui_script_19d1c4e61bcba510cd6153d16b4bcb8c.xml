@@ -105,60 +105,6 @@
 		DoModalMessage('IDE',strValue,function(){});
 	}
 
-	MakeTreeNavigation(appdata)
-	{
-		var treenavigation = { items: [] };
-		
-		var tn_category = { label: 'By Category', items: [] };
-		//var tn_table = { label: 'By Table', items: [] };
-		var tn_all = { label: 'All', items: [] };
-		
-		var aFiles = GetValue(appdata,'_metadata');
-		
-		//var itemsByTables = {};
-		for (var nFile = 0; nFile < aFiles.length; nFile++)
-		{
-			var file = aFiles[nFile];
-
-			var strClassName = GetValue(file,'sys_class_name');
-			var strSysId = GetValue(file,'sys_id');
-			var strName = GetValue(file,'sys_name');
-			
-			// All
-			tn_all.items.push( { label: strName, value: strClassName+','+strSysId } );
-			
-			// By Table
-			//itemsByTables = SetValue(strName,strClassName,strSysId);
-		}
-		
-		/*
-		var aClassNames = GetKeys(itemsByTables);
-		aClassNames = aClassNames.sort();
-		for (var nClassName = 0; nClassName < aClassNames.length; nClassName)
-		{
-			var strClassName = aClassNames[nClassName];
-			var tn_files = { label: strClassName, items: [] };
-			var itemsByTable = itemsByTables[strClassName];
-			var aSysIds = GetKeys(itemsByTable);
-			for (var nSysId = 0; nSysId < aSysIds.length; nSysId++)
-			{
-				var strSysId = aSysIds[nSysId];
-				var strName = GetValue(itemsByTable,strSysId);
-				tn_files.items.push( { label: strName, value: strClassName+','+strSysId } );
-			}
-			tn_table.items.push( tn_files );
-		}
-		*/
-		
-		
-		
-		//treenavigation.items.push( tn_table );
-		treenavigation.items.push( tn_all );
-
-		
-		return treenavigation;
-	}
-	
 	
 	render()
 	{
@@ -250,7 +196,7 @@
 				menu: 'MENU',
 				user: 'USER',
 				toolbar: e(ToolBar, { tools: tools, callbackOnClick: this.callbackToolBar }),
-				treenavigation: e(TreeNavigation, { treenavigation: treenavigation, callbackOnClick: this.callbackTreeNavigation }),
+				treenavigation: e(IDETreeNavigation, { appdata: appdata, callbackOnClick: this.callbackTreeNavigation }),
 				content: 'CONTENT',
 				sidebar: 'SIDEBAR',
 				status: status 
@@ -266,14 +212,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-29 09:47:59</sys_created_on>
         <sys_id>19d1c4e61bcba510cd6153d16b4bcb8c</sys_id>
-        <sys_mod_count>74</sys_mod_count>
+        <sys_mod_count>76</sys_mod_count>
         <sys_name>x_snc_ide.IDEController</sys_name>
         <sys_package display_value="IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_ui_script_19d1c4e61bcba510cd6153d16b4bcb8c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2023-06-10 21:33:32</sys_updated_on>
+        <sys_updated_on>2023-06-11 10:44:53</sys_updated_on>
         <ui_type>0</ui_type>
         <use_scoped_format>false</use_scoped_format>
     </sys_ui_script>
