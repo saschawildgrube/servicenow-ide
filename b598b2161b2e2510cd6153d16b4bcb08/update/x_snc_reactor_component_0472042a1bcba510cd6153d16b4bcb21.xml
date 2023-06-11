@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_reactor_component">
     <x_snc_reactor_component action="INSERT_OR_UPDATE">
         <content_css/>
-        <dependencies>099c24e61b4fa510cd6153d16b4bcb7a,59aa28661b4fa510cd6153d16b4bcb38,f5d7d9261bcfa510cd6153d16b4bcb15,eb1de5e21b03e510cd6153d16b4bcb6b,f5be6c2c97d36110a6a07767f053afa5,9861d5311bd7e110cd6153d16b4bcb73,95aa25b11b1be110cd6153d16b4bcb0f,acf063451b1469905b76777d8b4bcbb2,035b03ea1b57a510cd6153d16b4bcb0b</dependencies>
+        <dependencies>099c24e61b4fa510cd6153d16b4bcb7a,59aa28661b4fa510cd6153d16b4bcb38,f5d7d9261bcfa510cd6153d16b4bcb15,eb1de5e21b03e510cd6153d16b4bcb6b,f5be6c2c97d36110a6a07767f053afa5,9861d5311bd7e110cd6153d16b4bcb73,95aa25b11b1be110cd6153d16b4bcb0f,acf063451b1469905b76777d8b4bcbb2,035b03ea1b57a510cd6153d16b4bcb0b,1fb0773edb92d110f359c1911596194d</dependencies>
         <description>The IDE Controller React component. The IDE Controller component manages the overall state of the IDE, allows to select an app and keeps track on which app is displayed.</description>
         <jsx>false</jsx>
         <name>IDEController</name>
@@ -103,63 +103,11 @@
 	
 	callbackTreeNavigation(strValue)
 	{
+		strValue = GetStringValue(strValue);
 		DoModalMessage('IDE',strValue,function(){});
+		this.setState( { open: strValue });
 	}
 
-	MakeTreeNavigation(appdata)
-	{
-		var treenavigation = { items: [] };
-		
-		var tn_category = { label: 'By Category', items: [] };
-		//var tn_table = { label: 'By Table', items: [] };
-		var tn_all = { label: 'All', items: [] };
-		
-		var aFiles = GetValue(appdata,'_metadata');
-		
-		//var itemsByTables = {};
-		for (var nFile = 0; nFile < aFiles.length; nFile++)
-		{
-			var file = aFiles[nFile];
-
-			var strClassName = GetValue(file,'sys_class_name');
-			var strSysId = GetValue(file,'sys_id');
-			var strName = GetValue(file,'sys_name');
-			
-			// All
-			tn_all.items.push( { label: strName + ' ('+strClassName+')', value: strClassName+','+strSysId } );
-			
-			// By Table
-			//itemsByTables = SetValue(strName,strClassName,strSysId);
-		}
-		
-		/*
-		var aClassNames = GetKeys(itemsByTables);
-		aClassNames = aClassNames.sort();
-		for (var nClassName = 0; nClassName < aClassNames.length; nClassName)
-		{
-			var strClassName = aClassNames[nClassName];
-			var tn_files = { label: strClassName, items: [] };
-			var itemsByTable = itemsByTables[strClassName];
-			var aSysIds = GetKeys(itemsByTable);
-			for (var nSysId = 0; nSysId < aSysIds.length; nSysId++)
-			{
-				var strSysId = aSysIds[nSysId];
-				var strName = GetValue(itemsByTable,strSysId);
-				tn_files.items.push( { label: strName, value: strClassName+','+strSysId } );
-			}
-			tn_table.items.push( tn_files );
-		}
-		*/
-		
-		
-		
-		//treenavigation.items.push( tn_table );
-		treenavigation.items.push( tn_all );
-
-		
-		return treenavigation;
-	}
-	
 	
 	render()
 	{
@@ -192,8 +140,31 @@
 		else if (strState == 'edit')
 		{
 			
+			var strOpen = GetStringValue(this.state.open);
+			
+			var iframe = null;
+			
+			if (strOpen != '')
+			{
+				this.setState( { open: null } );
+				var aValue = strOpen.split(',');
+				var strClassName = GetValue(aValue,0);
+				var strSysId = GetValue(aValue,1);
+				
+				var strContentUrl = '/'+strClassName+'.do?sys_id='+strSysId; 
+				
+				iframe = e(IFrame,{url: strContentUrl});
+				
+				//this.setState( { content_classname: strClassName})
+				
+			}
+			
+
+			
+			
 			var strAppNameVersion = appdata.name + ' ' + appdata.version;
 					
+			// Logo
 			
 			var logo = e('div',
 				{
@@ -206,6 +177,12 @@
 				},
 				'ServiceNow IDE - ' + appdata.name_clean);
 			
+			// Menu
+			
+			
+			// User
+			
+			// ToolBar
 			
 			var tools = [];
 			tools.push({
@@ -241,8 +218,13 @@
 					value: 'error'
 				});
 			
-			var treenavigation = this.MakeTreeNavigation(appdata);
-
+			
+			// Content Area
+			
+			var content = iframe;
+			
+			// Status Bar
+			
 			var strStatus = strAppNameVersion;		
 			var status = e('span',{},strStatus);
 
@@ -251,9 +233,9 @@
 				menu: 'MENU',
 				user: 'USER',
 				toolbar: e(ToolBar, { tools: tools, callbackOnClick: this.callbackToolBar }),
-				treenavigation: e(TreeNavigation, { treenavigation: treenavigation, callbackOnClick: this.callbackTreeNavigation }),
+				treenavigation: e(IDETreeNavigationController, { appdata: appdata, callbackOnClick: this.callbackTreeNavigation }),
 				content: 'CONTENT',
-				sidebar: 'SIDEBAR',
+				sidebar: null,
 				status: status 
 			});
 
@@ -267,14 +249,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-29 09:49:32</sys_created_on>
         <sys_id>0472042a1bcba510cd6153d16b4bcb21</sys_id>
-        <sys_mod_count>10</sys_mod_count>
+        <sys_mod_count>11</sys_mod_count>
         <sys_name>IDEController</sys_name>
         <sys_package display_value="IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>x_snc_reactor_component_0472042a1bcba510cd6153d16b4bcb21</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2023-06-11 10:43:37</sys_updated_on>
+        <sys_updated_on>2023-06-11 14:23:33</sys_updated_on>
         <type>script</type>
         <ui_script display_value="x_snc_ide.IDEController">19d1c4e61bcba510cd6153d16b4bcb8c</ui_script>
         <url/>
