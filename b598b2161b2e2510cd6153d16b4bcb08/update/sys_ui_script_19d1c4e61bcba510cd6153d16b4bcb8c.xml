@@ -21,13 +21,11 @@
 		this.state = {
 			state: strState,
 			app_id: strAppId,
-			app_data: null
+			app_data: null,
+			filter: ''
 		};
-		this.callbackSelectApp = this.callbackSelectApp.bind(this);
-		this.onServerRequestGetAppData = this.onServerRequestGetAppData.bind(this);
-
-		this.callbackToolBar = this.callbackToolBar.bind(this);
-		this.callbackTreeNavigation = this.callbackTreeNavigation.bind(this);
+		
+		BindAllFunctionsToThis(this);
 	}
 	
 	callbackSelectApp(strAppSysId)
@@ -78,6 +76,21 @@
 			DoModalMessage('IDE','TODO: A file is to be created...',function(){});
 			return;
 		}
+		if (strValue == 'manual')
+		{
+			var aFiles = GetValue(this.state.app_data,'_metadata');
+			for (var nFile = 0; nFile < aFiles.length; nFile++)
+			{
+				var file = aFiles[nFile];
+				if (file.sys_name == 'manual' && file.sys_class_name == 'sys_ui_page')
+				{
+					this.setState( { content: 'sys_ui_page,'+file.sys_id } );
+					return;
+				}
+			}
+			DoModalMessage('IDE','The manual UI Page can no longer be found!',function(){});
+			return;
+		}			
 		if (strValue == 'backgroundscript')
 		{
 			RedirectToUrl('/sys.scripts.do',true);
@@ -108,14 +121,20 @@
 				});			
 			return;
 		}*/
+		DoModalMessage('IDE','TODO: Not supported toolbar icon...',function(){});
 
 	}
 	
 	callbackTreeNavigation(strValue)
 	{
 		strValue = GetStringValue(strValue);
-		this.setState( { content: strValue });
-		
+		this.setState({ content: strValue });
+	}
+	
+	onInputFilter()
+	{
+		var strValue = GetStringValue(event.target.value);
+		this.setState({ filter: strValue });
 	}
 
 	
@@ -185,6 +204,29 @@
 					icon: 'plus-circle',
 					value: 'file_create'
 				});
+			
+			var bManual = false;
+			var aFiles = GetValue(appdata,'_metadata');
+			for (var nFile = 0; nFile < aFiles.length; nFile++)
+			{
+				var file = aFiles[nFile];
+				if (file.sys_name == 'manual' && file.sys_class_name == 'sys_ui_page')
+				{
+					bManual = true;
+					//console.log(aFiles[nFile]);
+					break;
+				}
+			}
+
+			if (bManual == true)
+			{
+				tools.push({
+						text: 'Manual',
+						icon: 'file-o',
+						value: 'manual'
+					});
+			}
+			
 			tools.push({
 					text: 'Background Script',
 					icon: 'code',
@@ -215,6 +257,21 @@
 				});
 */			
 			
+			// Leftbar header
+			var leftbarheader = e('input',
+				{
+					onInput: this.onInputFilter,
+					value: this.state.filter
+				});
+			
+			// TreeNavigation
+			var treenavigation = e(IDETreeNavigationController,
+				{
+					appdata: appdata,
+					callbackOnClick: this.callbackTreeNavigation,
+					filter: this.state.filter
+				});
+			
 			// Content Area
 			var strContent = GetStringValue(this.state.content);
 			if (strContent == '')
@@ -241,7 +298,8 @@
 				menu: null,
 				user: null,
 				toolbar: e(ToolBar, { tools: tools, callbackOnClick: this.callbackToolBar }),
-				treenavigation: e(IDETreeNavigationController, { appdata: appdata, callbackOnClick: this.callbackTreeNavigation }),
+				leftbarheader: leftbarheader,
+				treenavigation: treenavigation,
 				content: iframe,
 				sidebar: null,
 				status: status 
@@ -257,14 +315,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-29 09:47:59</sys_created_on>
         <sys_id>19d1c4e61bcba510cd6153d16b4bcb8c</sys_id>
-        <sys_mod_count>93</sys_mod_count>
+        <sys_mod_count>107</sys_mod_count>
         <sys_name>x_snc_ide.IDEController</sys_name>
         <sys_package display_value="IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_ui_script_19d1c4e61bcba510cd6153d16b4bcb8c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2023-06-11 22:05:15</sys_updated_on>
+        <sys_updated_on>2023-09-23 11:21:07</sys_updated_on>
         <ui_type>0</ui_type>
         <use_scoped_format>false</use_scoped_format>
     </sys_ui_script>
