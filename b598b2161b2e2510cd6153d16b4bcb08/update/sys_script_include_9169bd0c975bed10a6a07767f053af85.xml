@@ -5,7 +5,7 @@
         <api_name>x_snc_ide.GetAppData</api_name>
         <caller_access/>
         <client_callable>false</client_callable>
-        <description>Returns an objects representing the given application including an array of objects representing the sys_metadata records.</description>
+        <description>Returns an object representing the given application including an array of objects representing the sys_metadata records.</description>
         <name>GetAppData</name>
         <script><![CDATA[function GetAppData(vApp)
 {
@@ -16,6 +16,8 @@
 	var ArrayValueExists = x_snc_devtools.ArrayValueExists;
 	var GetStringValue = x_snc_devtools.GetStringValue;
 	var GetRecord = x_snc_devtools.GetRecord;
+	var GetKeys = x_snc_devtools.GetKeys;
+
 
 	var grApp = GetAppRecord(vApp);
 	if (IsValidRecord(grApp) == false)
@@ -30,6 +32,36 @@
 	var aMetaData = [];
 	
 	var aIgnoredClasses = GetSecondaryRecordTables();
+	
+	var tableColumns = {
+		collection:
+		[
+			'sys_script'
+		],
+		table:
+		[
+			'sys_ui_action',
+			'sys_ui_policy'
+		],
+		name:
+		[
+			'sys_ui_list',
+			'sys_ui_style',
+			'sys_ui_related_list',
+			'sys_ui_list_control',
+			'sys_db_object',
+			'sys_dictionary_override',
+			'sys_choice_set'
+		],
+		category:
+		[
+			'sys_number'
+		],
+		m2m_table:
+		[
+			'sys_m2m'
+		]
+	};	
 	
 	var grMetaData = new GlideRecord('sys_metadata');
 	grMetaData.orderBy('sys_name');
@@ -54,26 +86,16 @@
 		}
 		metadata['_display'] = strDisplay;
 		
-		if (strClassName == 'sys_script')
+		var aColumns = GetKeys(tableColumns);
+		for (var nColumn = 0; nColumn < aColumns.length; nColumn++)
 		{
-			var grRecord = GetRecord(strClassName,metadata.sys_id);
-			metadata['_table'] = GetStringValue(grRecord.collection);
+			var strColumn = aColumns[nColumn];
+			if (ArrayValueExists(tableColumns[strColumn],strClassName) == true)
+			{
+				var grRecord = GetRecord(strClassName,metadata.sys_id);
+				metadata['_table'] = GetStringValue(grRecord.getValue(strColumn));
+			}	
 		}
-		if (strClassName == 'sys_ui_action'
-			|| strClassName == 'sys_ui_policy')
-		{
-			var grRecord = GetRecord(strClassName,metadata.sys_id);
-			metadata['_table'] = GetStringValue(grRecord.table);
-		}		
-		if (strClassName == 'sys_ui_list'
-			|| strClassName == 'sys_ui_style'
-			|| strClassName == 'sys_ui_related_list'
-			|| strClassName == 'sys_ui_list_control'
-			|| strClassName == 'sys_db_object')
-		{
-			var grRecord = GetRecord(strClassName,metadata.sys_id);
-			metadata['_table'] = GetStringValue(grRecord.name);
-		}				
 		aMetaData.push(metadata);
 	}
 	appdata._metadata = aMetaData; 
@@ -84,13 +106,13 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-06-03 10:19:49</sys_created_on>
         <sys_id>9169bd0c975bed10a6a07767f053af85</sys_id>
-        <sys_mod_count>48</sys_mod_count>
+        <sys_mod_count>56</sys_mod_count>
         <sys_name>GetAppData</sys_name>
         <sys_package display_value="IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_script_include_9169bd0c975bed10a6a07767f053af85</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2024-01-26 20:06:01</sys_updated_on>
+        <sys_updated_on>2024-01-26 20:30:09</sys_updated_on>
     </sys_script_include>
 </record_update>
