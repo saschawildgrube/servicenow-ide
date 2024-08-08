@@ -5,6 +5,7 @@
         <enforce_license>none</enforce_license>
         <guided_setup_guid/>
         <hide_on_ui>false</hide_on_ui>
+        <ide_created/>
         <installed_as_dependency>false</installed_as_dependency>
         <js_level>helsinki_es5</js_level>
         <licensable>true</licensable>
@@ -20,18 +21,19 @@
         <runtime_access_tracking>permissive</runtime_access_tracking>
         <scope>x_snc_ide</scope>
         <scoped_administration>false</scoped_administration>
-        <short_description>ServiceNow IDE is the React-based ultimate Studio alternative. </short_description>
+        <short_description>IDE is the React-based ultimate Studio alternative. </short_description>
         <source>x_snc_ide</source>
         <store_correlation_id/>
         <store_url/>
+        <subscription_entitlement/>
         <sys_class_name>sys_app</sys_class_name>
         <sys_code/>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-04 07:55:09</sys_created_on>
         <sys_id>b598b2161b2e2510cd6153d16b4bcb08</sys_id>
-        <sys_mod_count>4</sys_mod_count>
+        <sys_mod_count>5</sys_mod_count>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2023-05-29 08:19:48</sys_updated_on>
+        <sys_updated_on>2024-08-08 16:38:34</sys_updated_on>
         <template/>
         <trackable>true</trackable>
         <uninstall_blocked>false</uninstall_blocked>
