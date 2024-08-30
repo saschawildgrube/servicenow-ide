@@ -107,6 +107,19 @@
 			RedirectToUrl('https://developer.servicenow.com/dev.do#!/reference/',true);
 			return;
 		}
+		if (strValue == 'clear_cache')
+		{
+			function ClearCache(bReady)
+			{
+				if (bReady == true)
+				{
+					RedirectToUrl('/cache.do',true);
+					return;
+				}
+			}
+			DoModalConfirm('IDE','Ready to clear the cache?',ClearCache)
+			return;
+		}			
 		if (strValue == 'fontawesome_link')
 		{
 			RedirectToUrl('https://fontawesome.com/v4/icons/',true);
@@ -233,6 +246,12 @@
 					icon: 'code',
 					value: 'backgroundscript'
 				});
+
+			tools.push({
+					text: 'Clear Cache',
+					icon: 'shower',
+					value: 'clear_cache'
+				});				
 			if (IsValidUrl(appdata.x_snc_devtools_repo_url) == true)
 			{
 				tools.push({
@@ -316,15 +335,16 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-29 09:47:59</sys_created_on>
         <sys_id>19d1c4e61bcba510cd6153d16b4bcb8c</sys_id>
-        <sys_mod_count>108</sys_mod_count>
+        <sys_mod_count>110</sys_mod_count>
         <sys_name>x_snc_ide.IDEController</sys_name>
         <sys_package display_value="IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_ui_script_19d1c4e61bcba510cd6153d16b4bcb8c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2023-10-02 14:43:17</sys_updated_on>
+        <sys_updated_on>2024-08-30 11:35:54</sys_updated_on>
         <ui_type>0</ui_type>
         <use_scoped_format>false</use_scoped_format>
+        <x_snc_devtools_global>false</x_snc_devtools_global>
     </sys_ui_script>
 </record_update>
