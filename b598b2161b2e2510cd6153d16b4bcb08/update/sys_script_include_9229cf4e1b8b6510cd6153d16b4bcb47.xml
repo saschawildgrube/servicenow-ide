@@ -22,36 +22,23 @@
 	for (var nApp = 0; nApp < aApps.length; nApp++)
 	{
 		var grApp = GetAppRecord(aApps[nApp]);
-		var strIDELink = HtmlRenderLink(GetInstanceURL()+'x_snc_ide_start.do?app='+grApp.sys_id,'Start IDE',true); 
+		var strIDELink = HtmlRenderLink(GetInstanceUrl()+'x_snc_ide_start.do?app='+grApp.sys_id,'Start IDE',true); 
 		SetValue(strIDELink,status,'applications',aApps[nApp],'ide');
 	}
 
-	/*
-	var aApps = GetKeys(GetValue(status,'applications'));
-	for (var nApp = 0; nApp < aApps.length; nApp++)
-	{
-		var grApp = GetAppRecord(aApps[nApp]);
-		var strIDELink = HtmlRenderLink(GetInstanceURL()+'x_snc_ide_start.do?app='+grApp.sys_id,'Start IDE',true); 
-		var strLinks = GetValue(status,'applications',aApps[nApp],'links');
-		strLinks += '|' + strIDELink;
-		SetValue(strLinks,status,'applications',aApps[nApp],'links');
-	}
-	*/
-	
-	
 	return status;
 }]]></script>
         <sys_class_name>sys_script_include</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-28 11:00:28</sys_created_on>
         <sys_id>9229cf4e1b8b6510cd6153d16b4bcb47</sys_id>
-        <sys_mod_count>11</sys_mod_count>
+        <sys_mod_count>12</sys_mod_count>
         <sys_name>DevToolsGetApplicationStatus</sys_name>
         <sys_package display_value="IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_script_include_9229cf4e1b8b6510cd6153d16b4bcb47</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2024-01-26 20:45:07</sys_updated_on>
+        <sys_updated_on>2024-09-10 10:27:49</sys_updated_on>
     </sys_script_include>
 </record_update>
