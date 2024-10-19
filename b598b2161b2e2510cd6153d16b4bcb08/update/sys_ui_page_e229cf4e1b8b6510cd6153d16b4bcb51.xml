@@ -4,13 +4,13 @@
         <client_script/>
         <description/>
         <direct>false</direct>
-        <endpoint>x_snc_ide_manual.do</endpoint>
+        <endpoint>x_snc_ride_manual.do</endpoint>
         <html><![CDATA[<?xml version="1.0" encoding="utf-8" ?>
 <j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null">
 <div style="padding-left: 20px;">
 <span style="visibility: hidden;">_CUT_HERE_</span>
 	<g2:no_escape>$[
-		var docapi = new x_snc_devtools.DocumentationAPI('b598b2161b2e2510cd6153d16b4bcb08');
+		var docapi = new x_snc_devtools.DocumentationAPI('x_snc_ride');
 		docapi.RenderHeader();
 	]</g2:no_escape>
 	
@@ -31,7 +31,7 @@
 	<ul>
 		<g2:no_escape>$[
 			docapi.RenderSystemRequirements(
-				'Tokyo,Utah',
+				'Washington,Xanadu',
 				true,
 				AppGetDependencies());
 		]</g2:no_escape>	
@@ -55,8 +55,8 @@
 		]</g2:no_escape>		
 		<g2:no_escape>$[
 			docapi.RenderInstallationInstructionsImportFromSourceControl(
-				'ServiceNow IDE',
-				'https://github.com/saschawildgrube/servicenow-ide');
+				'ServiceNow R-IDE',
+				'https://github.com/saschawildgrube/servicenow-ride');
 		]</g2:no_escape>		
 		<g2:no_escape>$[
 			docapi.RenderInstallationInstructionsAppInstall();
@@ -100,14 +100,9 @@
 	<g2:no_escape>$[docapi.RenderLicense()]</g2:no_escape>
 	
 	<h2>Release Notes</h2>
-<!--
-	<h3>1.1.0 - 2023-TODO</h3>
-	<ol>
-		<li>TODO: document changes here</li>
-	</ol>
--->
+
 	<!--
-	<h3>1.0.0 - 2023-TODO</h3>
+	<h3>1.0.0 - 2024-TODO</h3>
 	<p>First baselined version</p>
 -->
 <span style="visibility: hidden;">_CUT_HERE_</span>
@@ -119,13 +114,13 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-28 11:00:29</sys_created_on>
         <sys_id>e229cf4e1b8b6510cd6153d16b4bcb51</sys_id>
-        <sys_mod_count>2</sys_mod_count>
+        <sys_mod_count>5</sys_mod_count>
         <sys_name>manual</sys_name>
-        <sys_package display_value="IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
+        <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
-        <sys_scope display_value="IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
+        <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_ui_page_e229cf4e1b8b6510cd6153d16b4bcb51</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2023-10-02 15:03:20</sys_updated_on>
+        <sys_updated_on>2024-10-19 14:46:11</sys_updated_on>
     </sys_ui_page>
 </record_update>

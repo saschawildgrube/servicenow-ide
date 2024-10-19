@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
     <sys_ui_script action="INSERT_OR_UPDATE">
         <active>true</active>
-        <description>The IDETreeNavigation component renders the IDE tree navigation based on the given app data object.</description>
+        <description>The RIDETreeNavigation component renders the R-IDE tree navigation based on the given app data object.</description>
         <global>false</global>
         <ignore_in_now_experience>false</ignore_in_now_experience>
-        <name>x_snc_ide.IDETreeNavigationController</name>
+        <name>x_snc_ride.RIDETreeNavigationController</name>
         <script><![CDATA[class IDETreeNavigationController extends ReactorComponent
 {
 	constructor(props)
@@ -136,20 +136,21 @@
 			});
 	}	
 }]]></script>
-        <script_name>IDETreeNavigationController</script_name>
+        <script_name>RIDETreeNavigationController</script_name>
         <sys_class_name>sys_ui_script</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-06-11 10:42:25</sys_created_on>
         <sys_id>8fdacb2a1b57a510cd6153d16b4bcbb5</sys_id>
-        <sys_mod_count>40</sys_mod_count>
-        <sys_name>x_snc_ide.IDETreeNavigationController</sys_name>
-        <sys_package display_value="IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
+        <sys_mod_count>41</sys_mod_count>
+        <sys_name>x_snc_ride.RIDETreeNavigationController</sys_name>
+        <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
-        <sys_scope display_value="IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
+        <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_ui_script_8fdacb2a1b57a510cd6153d16b4bcbb5</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2023-10-03 18:37:54</sys_updated_on>
+        <sys_updated_on>2024-10-19 14:53:44</sys_updated_on>
         <ui_type>0</ui_type>
         <use_scoped_format>false</use_scoped_format>
+        <x_snc_devtools_global>false</x_snc_devtools_global>
     </sys_ui_script>
 </record_update>

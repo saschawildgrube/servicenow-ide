@@ -2,11 +2,12 @@
     <x_snc_reactor_component action="INSERT_OR_UPDATE">
         <content_css/>
         <dependencies>0472042a1bcba510cd6153d16b4bcb21</dependencies>
-        <description>The main IDE App.</description>
+        <description>The main R-IDE App.</description>
         <jsx>false</jsx>
-        <name>IDEApp</name>
+        <module>false</module>
+        <name>RIDEApp</name>
         <role>app</role>
-        <script><![CDATA[class IDEApp extends ReactorComponent
+        <script><![CDATA[class RIDEApp extends ReactorComponent
 {
 	constructor(props)
 	{
@@ -15,10 +16,10 @@
 	
 	render()
 	{
-		var strScope = GetParam('scope');
-		return e(IDEController,
+		var strApp = GetParameter('app');
+		return e(RIDEController,
 			{
-				scope: strScope
+				app_id: strApp
 			});
 			
 	}	
@@ -28,16 +29,16 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-29 09:45:11</sys_created_on>
         <sys_id>4a2180e61bcba510cd6153d16b4bcb6e</sys_id>
-        <sys_mod_count>1</sys_mod_count>
-        <sys_name>IDEApp</sys_name>
-        <sys_package display_value="IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>RIDEApp</sys_name>
+        <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
-        <sys_scope display_value="IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
+        <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>x_snc_reactor_component_4a2180e61bcba510cd6153d16b4bcb6e</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2023-05-29 09:50:18</sys_updated_on>
+        <sys_updated_on>2024-10-19 14:55:48</sys_updated_on>
         <type>script</type>
-        <ui_script display_value="x_snc_ide.IDEApp">754104e61bcba510cd6153d16b4bcb1f</ui_script>
+        <ui_script display_value="x_snc_ride.RIDEApp">754104e61bcba510cd6153d16b4bcb1f</ui_script>
         <url/>
     </x_snc_reactor_component>
 </record_update>
