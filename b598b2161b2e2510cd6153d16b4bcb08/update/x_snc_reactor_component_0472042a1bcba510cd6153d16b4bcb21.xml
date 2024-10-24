@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_reactor_component">
     <x_snc_reactor_component action="INSERT_OR_UPDATE">
         <content_css/>
-        <dependencies>099c24e61b4fa510cd6153d16b4bcb7a,59aa28661b4fa510cd6153d16b4bcb38,f5d7d9261bcfa510cd6153d16b4bcb15,eb1de5e21b03e510cd6153d16b4bcb6b,f5be6c2c97d36110a6a07767f053afa5,9861d5311bd7e110cd6153d16b4bcb73,95aa25b11b1be110cd6153d16b4bcb0f,acf063451b1469905b76777d8b4bcbb2,035b03ea1b57a510cd6153d16b4bcb0b,1fb0773edb92d110f359c1911596194d</dependencies>
+        <dependencies>099c24e61b4fa510cd6153d16b4bcb7a,59aa28661b4fa510cd6153d16b4bcb38,f5d7d9261bcfa510cd6153d16b4bcb15,eb1de5e21b03e510cd6153d16b4bcb6b,f5be6c2c97d36110a6a07767f053afa5,9861d5311bd7e110cd6153d16b4bcb73,95aa25b11b1be110cd6153d16b4bcb0f,acf063451b1469905b76777d8b4bcbb2,035b03ea1b57a510cd6153d16b4bcb0b,1fb0773edb92d110f359c1911596194d,9d00ba2ec319da105a37f907050131d0</dependencies>
         <description>The IDE Controller React component. The IDE Controller component manages the overall state of the IDE, allows to select an app and keeps track on which app is displayed.</description>
         <jsx>false</jsx>
         <module>false</module>
@@ -26,8 +26,8 @@
 			app_data: null,
 			filter: ''
 		};
-		
-		BindAllFunctionsToThis(this);
+
+		this.title = 'R-IDE';
 	}
 	
 	callbackSelectApp(strAppSysId)
@@ -76,7 +76,7 @@
 		}		
 		if (strValue == 'file_create')
 		{
-			DoModalMessage('R-IDE','TODO: A file is to be created...',function(){});
+			DoModalMessage(this.title,'TODO: A file is to be created...',function(){});
 			return;
 		}
 		if (strValue == 'manual')
@@ -91,7 +91,7 @@
 					return;
 				}
 			}
-			DoModalMessage('R-IDE','The manual UI Page can no longer be found!',function(){});
+			DoModalMessage(this.title,'The manual UI Page can no longer be found!',function(){});
 			return;
 		}			
 		if (strValue == 'backgroundscript')
@@ -119,7 +119,7 @@
 					return;
 				}
 			}
-			DoModalConfirm('R-IDE','Ready to clear the cache?',ClearCache)
+			DoModalConfirm(this.title,'Ready to clear the cache?',ClearCache)
 			return;
 		}			
 		if (strValue == 'fontawesome_link')
@@ -137,7 +137,7 @@
 				});			
 			return;
 		}*/
-		DoModalMessage('R-IDE','TODO: Not supported toolbar icon...',function(){});
+		DoModalMessage(this.title,'TODO: Not supported toolbar icon...',function(){});
 
 	}
 	
@@ -175,7 +175,7 @@
 		
 		if (strState == 'select')
 		{
-			return e(Fullscreen,{},e(Centered,{},e(IDEAppSelectorController,{ app_id: strAppId, callbackSelectApp: this.callbackSelectApp })));			
+			return e(Fullscreen,{},e(Centered,{},e(RIDEAppSelectorController,{ app_id: strAppId, callbackSelectApp: this.callbackSelectApp })));			
 		}
 		else if (strState == 'loading')
 		{
@@ -197,7 +197,7 @@
 						margin: '5px'
 					}
 				},
-				'ServiceNow IDE - ' + appdata.name_clean);
+				this.title + ' - ' + appdata.name_clean);
 			
 			// Menu
 			
@@ -287,7 +287,7 @@
 				});
 			
 			// TreeNavigation
-			var treenavigation = e(IDETreeNavigationController,
+			var treenavigation = e(RIDETreeNavigationController,
 				{
 					appdata: appdata,
 					callbackOnClick: this.callbackTreeNavigation,
@@ -308,8 +308,25 @@
 				var strSysId = GetValue(aValue,1);
 				var strContentUrl = '/'+strClassName+'.do?sys_id='+strSysId; 
 				iframe = e(IFrame,{url: strContentUrl});
-			}			
-			var content = iframe;
+			}
+
+			var aItems = [];
+
+			aItems.push(
+				{
+					label: strClassName + ' - ' + strSysId,
+					value: strContent,
+					content: iframe
+				}
+			);
+
+			var tabcontainer = e(TabContainer,
+				{
+					items: aItems,
+					value: strContent
+				});
+
+			var content = tabcontainer;
 			
 			// Status Bar
 			var strStatus = strAppNameVersion;		
@@ -337,14 +354,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-29 09:49:32</sys_created_on>
         <sys_id>0472042a1bcba510cd6153d16b4bcb21</sys_id>
-        <sys_mod_count>12</sys_mod_count>
+        <sys_mod_count>13</sys_mod_count>
         <sys_name>RIDEController</sys_name>
         <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>x_snc_reactor_component_0472042a1bcba510cd6153d16b4bcb21</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2024-10-19 14:57:27</sys_updated_on>
+        <sys_updated_on>2024-10-21 06:40:29</sys_updated_on>
         <type>script</type>
         <ui_script display_value="x_snc_ride.RIDEController">19d1c4e61bcba510cd6153d16b4bcb8c</ui_script>
         <url/>

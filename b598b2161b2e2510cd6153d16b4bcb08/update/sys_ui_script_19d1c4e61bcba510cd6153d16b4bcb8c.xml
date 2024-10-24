@@ -24,6 +24,8 @@
 			app_data: null,
 			filter: ''
 		};
+
+		this.title = 'R-IDE';
 	}
 	
 	callbackSelectApp(strAppSysId)
@@ -72,7 +74,7 @@
 		}		
 		if (strValue == 'file_create')
 		{
-			DoModalMessage('R-IDE','TODO: A file is to be created...',function(){});
+			DoModalMessage(this.title,'TODO: A file is to be created...',function(){});
 			return;
 		}
 		if (strValue == 'manual')
@@ -87,7 +89,7 @@
 					return;
 				}
 			}
-			DoModalMessage('R-IDE','The manual UI Page can no longer be found!',function(){});
+			DoModalMessage(this.title,'The manual UI Page can no longer be found!',function(){});
 			return;
 		}			
 		if (strValue == 'backgroundscript')
@@ -115,14 +117,19 @@
 					return;
 				}
 			}
-			DoModalConfirm('R-IDE','Ready to clear the cache?',ClearCache)
+			DoModalConfirm(this.title,'Ready to clear the cache?',ClearCache)
 			return;
 		}			
 		if (strValue == 'fontawesome_link')
 		{
 			RedirectToUrl('https://fontawesome.com/v4/icons/',true);
 			return;
-		}		
+		}	
+		if (strValue == 'transactions')
+		{
+			RedirectToUrl('/loading_transactions.do',true);
+			return;
+		}				
 		/*
 		if (strValue == 'error')
 		{
@@ -133,7 +140,7 @@
 				});			
 			return;
 		}*/
-		DoModalMessage('R-IDE','TODO: Not supported toolbar icon...',function(){});
+		DoModalMessage(this.title,'TODO: Not supported toolbar icon...',function(){});
 
 	}
 	
@@ -193,7 +200,7 @@
 						margin: '5px'
 					}
 				},
-				'ServiceNow R-IDE - ' + appdata.name_clean);
+				this.title + ' - ' + appdata.name_clean);
 			
 			// Menu
 			
@@ -249,7 +256,14 @@
 					text: 'Clear Cache',
 					icon: 'shower',
 					value: 'clear_cache'
-				});				
+				});		
+
+			tools.push({
+					text: 'Active Transactions',
+					icon: 'tasks',
+					value: 'transactions'
+				});						
+
 			if (IsValidUrl(appdata.x_snc_devtools_repo_url) == true)
 			{
 				tools.push({
@@ -304,9 +318,28 @@
 				var strSysId = GetValue(aValue,1);
 				var strContentUrl = '/'+strClassName+'.do?sys_id='+strSysId; 
 				iframe = e(IFrame,{url: strContentUrl});
-			}			
+			}
+
+			var aItems = [];
+
+			aItems.push(
+				{
+					label: strClassName + ' - ' + strSysId,
+					value: strContent,
+					content: iframe
+				}
+			);
+
+			var tabcontainer = e(TabContainer,
+				{
+					items: aItems,
+					value: strContent
+				});
+
+			//var content = tabcontainer;
 			var content = iframe;
 			
+
 			// Status Bar
 			var strStatus = strAppNameVersion;		
 			var status = e('span',{},strStatus);
@@ -318,7 +351,7 @@
 				toolbar: e(ToolBar, { tools: tools, callbackOnClick: this.callbackToolBar }),
 				leftbarheader: leftbarheader,
 				treenavigation: treenavigation,
-				content: iframe,
+				content: content,
 				sidebar: null,
 				status: status 
 			});
@@ -333,14 +366,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-29 09:47:59</sys_created_on>
         <sys_id>19d1c4e61bcba510cd6153d16b4bcb8c</sys_id>
-        <sys_mod_count>114</sys_mod_count>
+        <sys_mod_count>121</sys_mod_count>
         <sys_name>x_snc_ride.RIDEController</sys_name>
         <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_ui_script_19d1c4e61bcba510cd6153d16b4bcb8c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2024-10-21 06:30:20</sys_updated_on>
+        <sys_updated_on>2024-10-24 16:08:48</sys_updated_on>
         <ui_type>0</ui_type>
         <use_scoped_format>false</use_scoped_format>
         <x_snc_devtools_global>false</x_snc_devtools_global>
