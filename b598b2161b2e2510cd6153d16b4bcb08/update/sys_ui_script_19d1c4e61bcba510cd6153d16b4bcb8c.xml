@@ -10,19 +10,27 @@
 	constructor(props)
 	{
 		super(props);
+		
 		var strAppId = GetStringValue(this.props.app_id);
 		var strState = 'select';
 				
+		var aTabs = null;
+		var strCurrentTab = '';
+		
 		if (strAppId != '')
 		{
 			strState = 'edit';
+			strCurrentTab = 'sys_app,'+strAppId,
+			aTabs = [strCurrentTab];
 		}
 		
 		this.state = {
 			state: strState,
 			app_id: strAppId,
 			app_data: null,
-			filter: ''
+			filter: '',
+			currentatb: strCurrentTab,
+			tabs: aTabs
 		};
 
 		this.title = 'R-IDE';
@@ -38,12 +46,14 @@
 				});
 			return;
 		}
+		var strCurrentTab = 'sys_app,'+strAppSysId;
 		this.setState(
 			{
 				app_data: null,
 				app_id: strAppSysId,
 				state: 'edit',
-				content: null
+				currenttab: strCurrentTab,
+				tabs: [strCurrentTab]
 			});
 	}
 	
@@ -79,10 +89,11 @@
 		}
 		if (strValue == 'manual')
 		{
-			var aFiles = GetValue(this.state.app_data,'_metadata');
+			var _metadata = GetValue(this.state.app_data,'_metadata');
+			var aFiles = GetKeys(_metadata);
 			for (var nFile = 0; nFile < aFiles.length; nFile++)
 			{
-				var file = aFiles[nFile];
+				var file = _metadata[aFiles[nFile]];
 				if (file.sys_name == 'manual' && file.sys_class_name == 'sys_ui_page')
 				{
 					this.setState( { content: 'sys_ui_page,'+file.sys_id } );
@@ -146,8 +157,7 @@
 	
 	callbackTreeNavigation(strValue)
 	{
-		strValue = GetStringValue(strValue);
-		this.setState({ content: strValue });
+		this.openTab(strValue);
 	}
 	
 	onInputFilter()
@@ -156,6 +166,13 @@
 		this.setState({ filter: strValue });
 	}
 
+	openTab(strTab)
+	{
+		var strTab = GetStringValue(strTab);
+		var aTabs = GetArrayValue(this.state.tabs);
+		aTabs = ArrayPushUnique(aTabs,strTab);
+		this.setState({ currenttab: strTab, tabs: aTabs });
+	}
 	
 	render()
 	{
@@ -187,7 +204,6 @@
 		}
 		else if (strState == 'edit')
 		{
-	
 			var strAppNameVersion = appdata.name + ' ' + appdata.version;
 					
 			// Logo
@@ -225,9 +241,11 @@
 				});
 			
 			var bManual = false;
-			var aFiles = GetValue(appdata,'_metadata');
+			var _metadata = GetValue(appdata,'_metadata');
+			var aFiles = GetKeys(_metadata);
 			for (var nFile = 0; nFile < aFiles.length; nFile++)
 			{
+				var file = _metadata[aFiles[nFile]];			
 				var file = aFiles[nFile];
 				if (file.sys_name == 'manual' && file.sys_class_name == 'sys_ui_page')
 				{
@@ -305,40 +323,42 @@
 				});
 			
 			// Content Area
-			var strContent = GetStringValue(this.state.content);
-			if (strContent == '')
+			var strCurrentTab = GetStringValue(this.state.currenttab);
+
+			Debug(this.state.app_data);
+
+			var aTabs = GetArrayValue(this.state.tabs);
+
+			var aItems = [];
+			for (var nTab = 0; nTab < aTabs.length; nTab++)
 			{
-				strContent = 'sys_app,'+appdata.sys_id;
-			}
-			var iframe = null;
-			if (strContent != '')
-			{
-				var aValue = strContent.split(',');
+				var strTab = aTabs[nTab];
+				var aValue = strTab.split(',');
 				var strClassName = GetValue(aValue,0);
 				var strSysId = GetValue(aValue,1);
 				var strContentUrl = '/'+strClassName+'.do?sys_id='+strSysId; 
-				iframe = e(IFrame,{url: strContentUrl});
+				var strLabel = strClassName + ' - ' + strSysId;
+
+				var iframe = e(IFrame,{url: strContentUrl});
+				aItems.push(
+					{
+						label: strLabel,
+						value: strTab,
+						content: iframe
+					}
+				);
 			}
 
-			var aItems = [];
-
-			aItems.push(
-				{
-					label: strClassName + ' - ' + strSysId,
-					value: strContent,
-					content: iframe
-				}
-			);
+			Debug(aItems);
 
 			var tabcontainer = e(TabContainer,
 				{
 					items: aItems,
-					value: strContent
+					value: strCurrentTab
 				});
 
-			//var content = tabcontainer;
-			var content = iframe;
-			
+			var content = tabcontainer;
+	
 
 			// Status Bar
 			var strStatus = strAppNameVersion;		
@@ -366,14 +386,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-29 09:47:59</sys_created_on>
         <sys_id>19d1c4e61bcba510cd6153d16b4bcb8c</sys_id>
-        <sys_mod_count>121</sys_mod_count>
+        <sys_mod_count>145</sys_mod_count>
         <sys_name>x_snc_ride.RIDEController</sys_name>
         <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_ui_script_19d1c4e61bcba510cd6153d16b4bcb8c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2024-10-24 16:08:48</sys_updated_on>
+        <sys_updated_on>2024-11-10 12:34:16</sys_updated_on>
         <ui_type>0</ui_type>
         <use_scoped_format>false</use_scoped_format>
         <x_snc_devtools_global>false</x_snc_devtools_global>

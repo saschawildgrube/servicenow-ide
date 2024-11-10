@@ -31,13 +31,14 @@
 		var tn_bytable = { label: 'By Table', items: [] };
 		var tn_alphabetically = { label: 'Alphabetically', items: [] };
 		
-		var aFiles = GetValue(appdata,'_metadata');
+		var metadata = GetValue(appdata,'_metadata');
+		var aFiles = GetKeys(metadata);
 		
 		var itemsByTypes = {};
 		var itemsByTables = {};
 		for (var nFile = 0; nFile < aFiles.length; nFile++)
 		{
-			var file = aFiles[nFile];
+			var file = GetValue(metadata,aFiles[nFile]);
 
 			var strClassName = GetValue(file,'sys_class_name');
 			var strSysId = GetValue(file,'sys_id');
@@ -140,14 +141,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-06-11 10:42:25</sys_created_on>
         <sys_id>8fdacb2a1b57a510cd6153d16b4bcbb5</sys_id>
-        <sys_mod_count>43</sys_mod_count>
+        <sys_mod_count>44</sys_mod_count>
         <sys_name>x_snc_ride.RIDETreeNavigationController</sys_name>
         <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_ui_script_8fdacb2a1b57a510cd6153d16b4bcbb5</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2024-10-21 06:30:46</sys_updated_on>
+        <sys_updated_on>2024-11-10 12:36:12</sys_updated_on>
         <ui_type>0</ui_type>
         <use_scoped_format>false</use_scoped_format>
         <x_snc_devtools_global>false</x_snc_devtools_global>
