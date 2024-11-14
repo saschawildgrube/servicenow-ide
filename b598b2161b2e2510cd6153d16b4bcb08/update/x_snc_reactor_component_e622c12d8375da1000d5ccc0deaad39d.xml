@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_reactor_component">
+    <x_snc_reactor_component action="INSERT_OR_UPDATE">
+        <content_css/>
+        <dependencies>acf063451b1469905b76777d8b4bcbb2,9191395fdbd21510f359c191159619ef</dependencies>
+        <description>Allows to select an existing apps or to create a new one.</description>
+        <jsx>false</jsx>
+        <module>false</module>
+        <name>RIDECreateFileController</name>
+        <role>controller</role>
+        <script><![CDATA[class RIDECreateFileController extends ReactorComponent
+{
+	constructor(props)
+	{
+		super(props);
+		this.state = {
+			app_file_classes: null,
+			selected_class: null
+		};
+	}
+	
+	onSelect(strClassName)
+	{
+		this.setState(
+			{
+				selected_class: strClassName
+			});
+	}	
+
+	onServerRequestGetAppFileClasses(response)
+	{
+		this.setState(
+			{
+				app_file_classes: response
+			}
+		);
+	}		
+
+	onServerRequestCreateAppFile(response)
+	{
+		// TODO: check if creating the file was successful
+		//DoModalMessage('',response);
+		this.onCreateFile()
+	}
+
+	onFileCreated()
+	{
+		//DoModalMessage('','Create File');
+		/*
+		if (IsFunction(this.props.callbackOnSelect) == true)
+		{
+			this.props.callbackOnSelect(strClassName);
+		}
+		*/
+
+		if (IsFunction(this.props.callbackOnFileCreated) == true)
+		{
+			this.props.callbackOnFileCreated();
+		}
+	}	
+
+
+	onCancel()
+	{
+		if (IsFunction(this.props.callbackOnCancel) == true)
+		{
+			this.props.callbackOnCancel();
+		}
+	}
+
+	render()
+	{
+		var strAppSysId = this.props.app_sys_id;
+		if (IsValidSysId(strAppSysId) == false)
+		{
+			return e(Centered,{},e(Error,{ text: 'No application specifified!' }));
+		}
+
+		var strSelectClass = GetStringValue(this.state.selected_class);
+		if (strSelectClass != '')
+		{
+			ServerRequest(
+				'x_snc_ride.RIDEClientAPI',
+				'CreateAppFile',
+				{},
+				this.onServerRequestCreateAppFile);
+			return e(Centered,{},e(Waiting,{ text: 'Creating Application File...' }));
+		}
+
+
+		var app_file_classes = this.state.app_file_classes;
+		if (app_file_classes == null)
+		{
+			ServerRequest(
+				'x_snc_ride.RIDEClientAPI',
+				'GetAppFileClasses',
+				{},
+				this.onServerRequestGetAppFileClasses);
+			return e(Centered,{},e(Waiting,{ text: 'Loading Application File Classes...' }));
+		}
+				
+		var aRows = [];
+
+		var aHeaders = [
+			{
+				header: true,
+				content: 'Application File'
+			},
+			{
+				header: true,
+				content: 'Class Name'
+			}
+		];
+		aRows.push(aHeaders);
+	
+		var aClassNames = GetKeys(app_file_classes);
+
+		for (var nClass = 0; nClass < aClassNames.length; nClass++)
+		{
+			var strClassName = aClassNames[nClass];
+			var app_file_class = app_file_classes[strClassName];
+			var strName = GetValue(app_file_class,'name');
+			
+			var elementLinkName = e('a',
+				{
+					onClick: this.onSelect,
+					value: strClassName
+				},
+				strName);
+
+			var elementLinkClassName = e('a',
+				{
+					onClick: this.onSelect,
+					value: strClassName
+				},
+				strClassName);				
+			
+			var aCells = [
+				{ content: elementLinkName },
+				{ content: elementLinkClassName }
+			];
+
+			
+			aRows.push(aCells);
+		}
+		var table = e(TableComponent,{ cells: aRows, classname: 'ride_app_selector' },null);
+
+		var cancelButton = e(Button,{ text: 'Cancel', callbackOnClick: this.onCancel});
+		
+		var aComponents = [];
+		aComponents.push(e('div', { style: { maxHeight: '80vh', overflowY: 'auto' }},table));
+		aComponents.push(e('div', { style: { float: 'right', marginTop: '10px'}},cancelButton));
+		
+		//return e('div',{},aComponents);
+		return e(Centered,{},aComponents);
+	}	
+}]]></script>
+        <source_type>ui_script</source_type>
+        <sys_class_name>x_snc_reactor_component</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-11-10 21:09:31</sys_created_on>
+        <sys_id>e622c12d8375da1000d5ccc0deaad39d</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>RIDECreateFileController</sys_name>
+        <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
+        <sys_update_name>x_snc_reactor_component_e622c12d8375da1000d5ccc0deaad39d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-11-10 21:55:03</sys_updated_on>
+        <type>script</type>
+        <ui_script display_value="x_snc_ride.RIDECreateFileController">347f3ce18375da1000d5ccc0deaad3f9</ui_script>
+        <url/>
+    </x_snc_reactor_component>
+</record_update>

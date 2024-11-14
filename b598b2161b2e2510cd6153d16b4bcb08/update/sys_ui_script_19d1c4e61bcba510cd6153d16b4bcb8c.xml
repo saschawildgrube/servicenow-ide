@@ -11,22 +11,22 @@
 	{
 		super(props);
 		
-		var strAppId = GetStringValue(this.props.app_id);
+		var strAppSysId = GetStringValue(this.props.app_sys_id);
 		var strState = 'select';
 				
 		var aTabs = null;
 		var strCurrentTab = '';
 		
-		if (strAppId != '')
+		if (strAppSysId != '')
 		{
 			strState = 'edit';
-			strCurrentTab = 'sys_app,'+strAppId,
+			strCurrentTab = 'sys_app,'+strAppSysId,
 			aTabs = [strCurrentTab];
 		}
 		
 		this.state = {
 			state: strState,
-			app_id: strAppId,
+			app_sys_id: strAppSysId,
 			app_data: null,
 			filter: '',
 			currenttab: strCurrentTab,
@@ -38,7 +38,7 @@
 	
 	callbackSelectApp(strAppSysId)
 	{
-		if (this.state.app_id == strAppSysId)
+		if (this.state.app_sys_id == strAppSysId)
 		{
 			this.setState(
 				{
@@ -50,18 +50,39 @@
 		this.setState(
 			{
 				state: 'edit',
-				app_id: strAppSysId,
+				app_sys_id: strAppSysId,
 				app_data: null,
 				currenttab: strCurrentTab,
 				tabs: [strCurrentTab]
 			});
 	}
+
+	loadAppData()
+	{
+		ServerRequest(
+			'x_snc_ride.RIDEClientAPI',
+			'GetAppData',
+			{
+				app_sys_id: this.state.app_sys_id
+			},
+			this.onServerRequestGetAppData);
+	}
 	
 	onServerRequestGetAppData(appdata)
 	{
+		if (this.state.state == 'loading')
+		{
+			this.setState(
+				{
+					state: 'edit',
+					app_data: appdata
+				}
+			);
+			return;
+		}
+		DoModalMessage(this.title,'Refreshing outside loading: '+this.state.state,function(){});
 		this.setState(
 			{
-				state: 'edit',
 				app_data: appdata
 			}
 		);
@@ -77,6 +98,11 @@
 				});
 			return;
 		}
+		if (strValue == 'app_refresh')
+		{
+			this.loadAppData();
+			return;
+		}		
 		if (strValue == 'app_form')
 		{
 			this.openTab('sys_app,'+this.state.app_data.sys_id);
@@ -84,7 +110,7 @@
 		}		
 		if (strValue == 'file_create')
 		{
-			DoModalMessage(this.title,'TODO: A file is to be created...',function(){});
+			this.createFile()
 			return;
 		}
 		if (strValue == 'manual')
@@ -180,7 +206,8 @@
 		this.setState(
 			{
 				currenttab: strTab,
-				tabs: aTabs 
+				tabs: aTabs,
+				state: 'edit'
 			});
 	}
 	
@@ -243,39 +270,73 @@
 				currenttab: strCurrentTab,
 				tabs: aTabs 
 			});
+	}
+
+	createFile()
+	{
+		this.setState(
+			{
+				state: 'create_file'
+			});
+	}
+
+	onCreateFileCancel()
+	{
+		this.setState(
+			{
+				state: 'edit'
+			});
+	}
+
+	onCreateFileComplete(grRecord)
+	{
+		var strTab = grRecord.sys_class_name + ',' + grRecord.sys_id;
+		var aTabs = GetArrayValue(this.state.tabs);
+		aTabs = ArrayPushUnique(aTabs,strTab);
+		this.setState(
+			{
+				currenttab: strTab,
+				tabs: aTabs,
+				state: 'edit',
+				app_data: null
+			});
 
 	}
 
 	render()
 	{
 		var strState = GetStringValue(this.state.state);
-		var strAppId = GetStringValue(this.state.app_id);
+		var strAppSysId = GetStringValue(this.state.app_sys_id);
 		var appdata = this.state.app_data;
 		
-		if (strAppId == '')
+		if (strAppSysId == '')
 		{
-			strState = 'select';
+			strState = 'select';		
 		}
-		if (strState == 'edit')
-		{
-			if (IsObject(appdata) == false)
-			{
-				strState = 'loading';
-			}
-		}
-		
-		
+
+
 		if (strState == 'select')
 		{
-			return e(Fullscreen,{},e(Centered,{},e(RIDEAppSelectorController,{ app_id: strAppId, callbackSelectApp: this.callbackSelectApp })));			
+			var appselector = e(RIDEAppSelectorController,
+				{
+					app_sys_id: strAppSysId,
+					callbackSelectApp: this.callbackSelectApp
+				});
+			return e(Fullscreen,{},e(Centered,{},appselector));			
 		}
 		else if (strState == 'loading')
 		{
-			ServerRequest('x_snc_ride.RIDEClientAPI','GetAppData',{ app_id: strAppId },this.onServerRequestGetAppData);
+			this.loadAppData();
 			return e(Fullscreen,{},e(Centered,{},e(Waiting,{ text: 'Loading App...' })));
 		}
-		else if (strState == 'edit')
+		else if (strState == 'edit' || strState == 'create_file')
 		{
+			if (IsObject(appdata) == false)
+			{
+				this.setState( { state: 'loading' });
+				return;
+			}
+
 			var strAppNameVersion = appdata.name + ' ' + appdata.version;
 					
 			// Logo
@@ -301,6 +362,11 @@
 					icon: 'folder-open',
 					value: 'app_select'
 				});
+			tools.push({
+					text: '',
+					icon: 'refresh',
+					value: 'app_refresh'
+				});				
 			tools.push({
 					text: 'App Settings',
 					icon: 'gear',
@@ -389,58 +455,72 @@
 				});
 			
 			// Content Area
-			var strCurrentTab = GetStringValue(this.state.currenttab);
-			var aTabs = GetArrayValue(this.state.tabs);
-			var metadata = this.state.app_data._metadata;
+			var content = null;
 
-			var aItems = [];
-			for (var nTab = 0; nTab < aTabs.length; nTab++)
+			if (strState == 'create_file')
 			{
-				var strTab = aTabs[nTab];
-				var aValue = strTab.split(',');
-				var strClassName = GetValue(aValue,0);
-				var strSysId = GetValue(aValue,1);
-				var strContentUrl = '/'+strClassName+'.do?sys_id='+strSysId; 
-
-				var label = strClassName + ' - ' + strSysId;
-				
-				var file = GetValue(metadata,strSysId);
-				if (file != null)
-				{
-					label = e('span',
-						{
-							style: { pointerEvents: 'none' }
-						},
-						[
-							file.display,
-							e('br'),
-							strClassName
-						]);
-				}
-				else if (this.state.app_data.sys_id == strSysId)
-				{
-					label = 'App Settings';
-				}
-
-				var iframe = e(IFrame,{url: strContentUrl});
-				aItems.push(
+				content = e(RIDECreateFileController,
 					{
-						label: label,
-						value: strTab,
-						content: iframe
-					}
-				);
+						app_sys_id: strAppSysId,
+						callbackOnCancel: this.onCreateFileCancel,
+						callbackOnFileCreated: this.onCreateFileComplete
+					});
 			}
+			else
+			{
+				var strCurrentTab = GetStringValue(this.state.currenttab);
+				var aTabs = GetArrayValue(this.state.tabs);
+				var metadata = this.state.app_data._metadata;
 
-			var tabcontainer = e(TabContainer,
+				var aItems = [];
+				for (var nTab = 0; nTab < aTabs.length; nTab++)
 				{
-					items: aItems,
-					value: strCurrentTab,
-					callbackOnSelect: this.openTab,
-					callbackOnClose: this.closeTab
-				});
+					var strTab = aTabs[nTab];
+					var aValue = strTab.split(',');
+					var strClassName = GetValue(aValue,0);
+					var strSysId = GetValue(aValue,1);
+					var strContentUrl = '/'+strClassName+'.do?sys_id='+strSysId; 
 
-			var content = tabcontainer;
+					var label = strClassName + ' - ' + strSysId;
+					
+					var file = GetValue(metadata,strSysId);
+					if (file != null)
+					{
+						label = e('span',
+							{
+								style: { pointerEvents: 'none' }
+							},
+							[
+								file.display,
+								e('br'),
+								strClassName
+							]);
+					}
+					else if (this.state.app_data.sys_id == strSysId)
+					{
+						label = 'App Settings';
+					}
+
+					var iframe = e(IFrame,{url: strContentUrl});
+					aItems.push(
+						{
+							label: label,
+							value: strTab,
+							content: iframe
+						}
+					);
+				}
+
+				var tabcontainer = e(TabContainer,
+					{
+						items: aItems,
+						value: strCurrentTab,
+						callbackOnSelect: this.openTab,
+						callbackOnClose: this.closeTab
+					});
+				
+				content = tabcontainer;
+			}
 	
 
 			// Status Bar
@@ -469,14 +549,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-29 09:47:59</sys_created_on>
         <sys_id>19d1c4e61bcba510cd6153d16b4bcb8c</sys_id>
-        <sys_mod_count>186</sys_mod_count>
+        <sys_mod_count>208</sys_mod_count>
         <sys_name>x_snc_ride.RIDEController</sys_name>
         <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_ui_script_19d1c4e61bcba510cd6153d16b4bcb8c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2024-11-10 20:55:03</sys_updated_on>
+        <sys_updated_on>2024-11-10 23:17:26</sys_updated_on>
         <ui_type>0</ui_type>
         <use_scoped_format>false</use_scoped_format>
         <x_snc_devtools_global>false</x_snc_devtools_global>
