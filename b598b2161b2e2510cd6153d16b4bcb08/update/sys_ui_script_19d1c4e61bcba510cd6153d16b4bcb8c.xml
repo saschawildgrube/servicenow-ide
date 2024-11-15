@@ -274,10 +274,13 @@
 
 	createFile()
 	{
+		/*
 		this.setState(
 			{
 				state: 'create_file'
 			});
+		*/
+		this.openTab('new');
 	}
 
 	onCreateFileCancel()
@@ -288,10 +291,11 @@
 			});
 	}
 
-	onCreateFileComplete(grRecord)
+	onCreateFileComplete(record)
 	{
-		var strTab = grRecord.sys_class_name + ',' + grRecord.sys_id;
+		var strTab = record.sys_class_name + ',' + record.sys_id;
 		var aTabs = GetArrayValue(this.state.tabs);
+		aTabs = ArrayRemoveValue(aTabs,'new');
 		aTabs = ArrayPushUnique(aTabs,strTab);
 		this.setState(
 			{
@@ -300,7 +304,7 @@
 				state: 'edit',
 				app_data: null
 			});
-
+		
 	}
 
 	render()
@@ -476,37 +480,55 @@
 				for (var nTab = 0; nTab < aTabs.length; nTab++)
 				{
 					var strTab = aTabs[nTab];
-					var aValue = strTab.split(',');
-					var strClassName = GetValue(aValue,0);
-					var strSysId = GetValue(aValue,1);
-					var strContentUrl = '/'+strClassName+'.do?sys_id='+strSysId; 
 
-					var label = strClassName + ' - ' + strSysId;
+					var label = null;
+					var tabcontent = null;
+					if (strTab == 'new')
+					{
+						label = 'Create File';
+						tabcontent = e(RIDECreateFileController,
+						{
+							app_sys_id: strAppSysId,
+							callbackOnCancel: this.onCreateFileCancel,
+							callbackOnFileCreated: this.onCreateFileComplete
+						});
+					}
+					else
+					{
+						var aValue = strTab.split(',');
+						var strClassName = GetValue(aValue,0);
+						var strSysId = GetValue(aValue,1);
+						var strContentUrl = '/'+strClassName+'.do?sys_id='+strSysId; 
+
+						label = strClassName + ' - ' + strSysId;
+						
+						var file = GetValue(metadata,strSysId);
+						if (file != null)
+						{
+							label = e('span',
+								{
+									style: { pointerEvents: 'none' }
+								},
+								[
+									file.display,
+									e('br'),
+									strClassName
+								]);
+						}
+						else if (this.state.app_data.sys_id == strSysId)
+						{
+							label = 'App Settings';
+						}
+						var iframe = e(IFrame,{url: strContentUrl});
+						tabcontent = iframe;
+					}
+
 					
-					var file = GetValue(metadata,strSysId);
-					if (file != null)
-					{
-						label = e('span',
-							{
-								style: { pointerEvents: 'none' }
-							},
-							[
-								file.display,
-								e('br'),
-								strClassName
-							]);
-					}
-					else if (this.state.app_data.sys_id == strSysId)
-					{
-						label = 'App Settings';
-					}
-
-					var iframe = e(IFrame,{url: strContentUrl});
 					aItems.push(
 						{
 							label: label,
 							value: strTab,
-							content: iframe
+							content: tabcontent
 						}
 					);
 				}
@@ -549,14 +571,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-29 09:47:59</sys_created_on>
         <sys_id>19d1c4e61bcba510cd6153d16b4bcb8c</sys_id>
-        <sys_mod_count>208</sys_mod_count>
+        <sys_mod_count>216</sys_mod_count>
         <sys_name>x_snc_ride.RIDEController</sys_name>
         <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_ui_script_19d1c4e61bcba510cd6153d16b4bcb8c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2024-11-10 23:17:26</sys_updated_on>
+        <sys_updated_on>2024-11-15 06:39:57</sys_updated_on>
         <ui_type>0</ui_type>
         <use_scoped_format>false</use_scoped_format>
         <x_snc_devtools_global>false</x_snc_devtools_global>

@@ -48,23 +48,40 @@
 		);
 	}		
 
-	onServerRequestCreateAppFile(response)
+	onLoadIFrame(strUrl)
 	{
-		if (response == false)
+		var strClassName = this.state.selected_class;
+		if (strClassName == '')
 		{
-			DoModalMessage('Creating Application File','Failed to create an application file. Sorry.',function(){});
-			this.onCancel();
+			return;
+		}
+		if (strUrl.indexOf(strClassName+'.do?sys_id=') == -1)
+		{
+			return;
+		}
+		var nSysId = strUrl.indexOf('sys_id=');
+		var strSysId = strUrl.substr(nSysId+7,32);
+		if (IsValidSysId(strSysId) == false)
+		{
+			//this.callbackOnCancel();
 			return;
 		}
 
-		this.onFileCreated(response)
+		//DoModalMessage('Creating Application File','Created file '+strClassName +'.' + strSysId,function(){});
+
+		var record = {
+			sys_class_name: strClassName,
+			sys_id: strSysId
+		};
+
+		this.onFileCreated(record);
 	}
 
-	onFileCreated(grRecord)
+	onFileCreated(record)
 	{
 		if (IsFunction(this.props.callbackOnFileCreated) == true)
 		{
-			this.props.callbackOnFileCreated(grRecord);
+			this.props.callbackOnFileCreated(record);
 		}
 		this.setState(
 			{
@@ -72,15 +89,6 @@
 			}
 		);
 	}	
-
-
-	onCancel()
-	{
-		if (IsFunction(this.props.callbackOnCancel) == true)
-		{
-			this.props.callbackOnCancel();
-		}
-	}
 
 	render()
 	{
@@ -104,15 +112,14 @@
 		var strSelectClass = GetStringValue(this.state.selected_class);
 		if (strSelectClass != '')
 		{
-			ServerRequest(
-				'x_snc_ride.RIDEClientAPI',
-				'CreateAppFile',
-				{				
-					app_sys_id: strAppSysId,
-					class_name: strSelectClass
-				},
-				this.onServerRequestCreateAppFile);
-			return e(Centered,{},e(Waiting,{ text: 'Creating Application File...' }));
+			var strContentUrl = '/'+strSelectClass+'.do?sys_id=';
+			var iframe =  e(IFrame,
+				{
+					url: strContentUrl,
+					callbackOnLoad: this.onLoadIFrame
+				});
+
+			return iframe; 
 		}
 
 
@@ -248,17 +255,11 @@
 		}
 		var tableAll = e(TableComponent,{ cells: aRows, classname: 'ride_app_selector' },null);
 
-		var cancelButton = e(Button,{ text: 'Cancel', callbackOnClick: this.onCancel});
-		
 	
 		var aComponents = [];
 		aComponents.push(e('div', { style: { maxHeight: '80vh', overflowY: 'auto', float: 'left'}},tableUsualSuspects));
 		aComponents.push(e('div', { style: { maxHeight: '80vh', overflowY: 'auto', float: 'left' }},tableAll));
-		aComponents.push(e('div', { style: { float: 'right', marginTop: '10px'}},cancelButton));
-
 		
-		//aComponents.push(e('pre',{},RenderValue(app_file_classes)));
-
 		return e('div',{},aComponents);
 		//return e(Centered,{},aComponents);
 	}	
@@ -268,14 +269,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2024-11-10 20:56:49</sys_created_on>
         <sys_id>347f3ce18375da1000d5ccc0deaad3f9</sys_id>
-        <sys_mod_count>43</sys_mod_count>
+        <sys_mod_count>51</sys_mod_count>
         <sys_name>x_snc_ride.RIDECreateFileController</sys_name>
         <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_ui_script_347f3ce18375da1000d5ccc0deaad3f9</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2024-11-14 22:22:55</sys_updated_on>
+        <sys_updated_on>2024-11-15 12:15:24</sys_updated_on>
         <ui_type>0</ui_type>
         <use_scoped_format>false</use_scoped_format>
         <x_snc_devtools_global>false</x_snc_devtools_global>
