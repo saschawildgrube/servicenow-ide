@@ -36,13 +36,14 @@
 		this.title = 'R-IDE';
 	}
 	
-	callbackSelectApp(strAppSysId)
+	onSelectApp(strAppSysId)
 	{
 		if (this.state.app_sys_id == strAppSysId)
 		{
 			this.setState(
 				{
-					state: 'edit'
+					state: 'edit',
+					app_data: null
 				});
 			return;
 		}
@@ -80,7 +81,6 @@
 			);
 			return;
 		}
-		DoModalMessage(this.title,'Refreshing outside loading: '+this.state.state,function(){});
 		this.setState(
 			{
 				app_data: appdata
@@ -88,7 +88,7 @@
 		);
 	}
 
-	callbackToolBar(strValue)
+	onToolBar(strValue)
 	{
 		if (strValue == 'app_select')
 		{
@@ -101,6 +101,10 @@
 		if (strValue == 'app_refresh')
 		{
 			this.loadAppData();
+			this.setState(
+				{
+					app_data: null
+				});			
 			return;
 		}		
 		if (strValue == 'app_form')
@@ -291,6 +295,11 @@
 			});
 	}
 
+	onTabNavigation(strUrl)
+	{
+		//DoModalMessage('',strUrl);
+	}
+
 	onCreateFileComplete(record)
 	{
 		var strTab = record.sys_class_name + ',' + record.sys_id;
@@ -324,7 +333,7 @@
 			var appselector = e(RIDEAppSelectorController,
 				{
 					app_sys_id: strAppSysId,
-					callbackSelectApp: this.callbackSelectApp
+					callbackSelectApp: this.onSelectApp,
 				});
 			return e(Fullscreen,{},e(Centered,{},appselector));			
 		}
@@ -519,7 +528,11 @@
 						{
 							label = 'App Settings';
 						}
-						var iframe = e(IFrame,{url: strContentUrl});
+						var iframe = e(IFrame,
+							{
+								url: strContentUrl,
+								callbackOnLoad: this.onTabNavigation
+							});
 						tabcontent = iframe;
 					}
 
@@ -553,7 +566,7 @@
 				logo: logo,
 				menu: null,
 				user: null,
-				toolbar: e(ToolBar, { tools: tools, callbackOnClick: this.callbackToolBar }),
+				toolbar: e(ToolBar, { tools: tools, callbackOnClick: this.onToolBar }),
 				leftbarheader: leftbarheader,
 				treenavigation: treenavigation,
 				content: content,
@@ -571,14 +584,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-29 09:47:59</sys_created_on>
         <sys_id>19d1c4e61bcba510cd6153d16b4bcb8c</sys_id>
-        <sys_mod_count>216</sys_mod_count>
+        <sys_mod_count>225</sys_mod_count>
         <sys_name>x_snc_ride.RIDEController</sys_name>
         <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_ui_script_19d1c4e61bcba510cd6153d16b4bcb8c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2024-11-15 06:39:57</sys_updated_on>
+        <sys_updated_on>2024-11-28 13:06:29</sys_updated_on>
         <ui_type>0</ui_type>
         <use_scoped_format>false</use_scoped_format>
         <x_snc_devtools_global>false</x_snc_devtools_global>
