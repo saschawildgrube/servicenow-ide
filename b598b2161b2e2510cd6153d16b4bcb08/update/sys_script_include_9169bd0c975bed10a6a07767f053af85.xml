@@ -29,6 +29,15 @@
 	
 	appdata.name_clean = GetCleanAppName(appdata.name);
 	appdata._metadata = {};
+
+
+	var grRepo = new GlideRecord('sys_repo_config');
+	grRepo.addQuery('sys_app','=',grApp.sys_id);
+	grRepo.query();
+	if (grRepo.next())
+	{
+		appdata.repo_config_sys_id = GetStringValue(grRepo.sys_id);
+	}	
 	
 	var aIgnoredClasses = GetSecondaryRecordTables();
 	
@@ -114,13 +123,13 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-06-03 10:19:49</sys_created_on>
         <sys_id>9169bd0c975bed10a6a07767f053af85</sys_id>
-        <sys_mod_count>59</sys_mod_count>
+        <sys_mod_count>60</sys_mod_count>
         <sys_name>GetAppData</sys_name>
         <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_script_include_9169bd0c975bed10a6a07767f053af85</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2024-11-10 15:10:23</sys_updated_on>
+        <sys_updated_on>2024-12-01 12:41:31</sys_updated_on>
     </sys_script_include>
 </record_update>

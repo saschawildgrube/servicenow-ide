@@ -149,6 +149,11 @@
 			RedirectToUrl(this.state.app_data.x_snc_devtools_repo_url,true);
 			return;
 		}		
+		if (strValue == 'repo_config')
+		{
+			this.openTab('sys_repo_config,'+this.state.app_data.repo_config_sys_id);
+			return;
+		}				
 		if (strValue == 'apiref_link')
 		{
 			RedirectToUrl('https://developer.servicenow.com/dev.do#!/reference/',true);
@@ -438,6 +443,16 @@
 						icon: 'code-fork',
 						value: 'repo_link'
 					});
+				tools.push({
+						text: '',
+						icon: 'cogs',
+						value: 'repo_config'
+					});			
+				tools.push({
+						text: '',
+						icon: 'upload',
+						value: 'repo_commit'
+					});									
 			}
 			tools.push({
 					text: '',
@@ -529,10 +544,14 @@
 									strClassName
 								]);
 						}
-						else if (this.state.app_data.sys_id == strSysId)
+						else if (strSysId == this.state.app_data.sys_id)
 						{
 							label = 'App Settings';
 						}
+						else if (strSysId == this.state.app_data.repo_config_sys_id)
+						{
+							label = 'Repo Config';
+						}						
 						var iframe = e(IFrame,
 							{
 								url: strContentUrl,
@@ -589,14 +608,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-29 09:47:59</sys_created_on>
         <sys_id>19d1c4e61bcba510cd6153d16b4bcb8c</sys_id>
-        <sys_mod_count>227</sys_mod_count>
+        <sys_mod_count>234</sys_mod_count>
         <sys_name>x_snc_ride.RIDEController</sys_name>
         <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_ui_script_19d1c4e61bcba510cd6153d16b4bcb8c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2024-11-28 15:43:41</sys_updated_on>
+        <sys_updated_on>2024-12-01 12:48:02</sys_updated_on>
         <ui_type>0</ui_type>
         <use_scoped_format>false</use_scoped_format>
         <x_snc_devtools_global>false</x_snc_devtools_global>
