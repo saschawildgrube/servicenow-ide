@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_snc_ride.GetRideUrl</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>Returns the URL to the R-IDE start UI Page loading the given app.</description>
+        <name>GetRideUrl</name>
+        <script><![CDATA[function GetRideUrl(vApp)
+{
+	var GetAppRecord = x_snc_devtools.GetAppRecord;
+	var IsValidRecord = x_snc_devtools.IsValidRecord;
+	var GetInstanceUrl = x_snc_devtools.GetInstanceUrl;
+	
+	var strUrl = GetInstanceUrl() + '/x_snc_ride_start.do';
+	var grApp = GetAppRecord(vApp);
+	if (IsValidRecord(grApp))
+	{
+		strUrl += '?app=' + grApp.sys_id;
+	}
+	return strUrl;
+}]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-12-02 16:49:02</sys_created_on>
+        <sys_id>2099dd2c8312565000d5ccc0deaad325</sys_id>
+        <sys_mod_count>4</sys_mod_count>
+        <sys_name>GetRideUrl</sys_name>
+        <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
+        <sys_update_name>sys_script_include_2099dd2c8312565000d5ccc0deaad325</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-12-02 16:53:10</sys_updated_on>
+    </sys_script_include>
+</record_update>
