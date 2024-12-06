@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_reactor_component">
     <x_snc_reactor_component action="INSERT_OR_UPDATE">
         <content_css/>
-        <dependencies>099c24e61b4fa510cd6153d16b4bcb7a,59aa28661b4fa510cd6153d16b4bcb38,f5d7d9261bcfa510cd6153d16b4bcb15,eb1de5e21b03e510cd6153d16b4bcb6b,f5be6c2c97d36110a6a07767f053afa5,9861d5311bd7e110cd6153d16b4bcb73,95aa25b11b1be110cd6153d16b4bcb0f,acf063451b1469905b76777d8b4bcbb2,035b03ea1b57a510cd6153d16b4bcb0b,1fb0773edb92d110f359c1911596194d,9d00ba2ec319da105a37f907050131d0,e622c12d8375da1000d5ccc0deaad39d</dependencies>
+        <dependencies>099c24e61b4fa510cd6153d16b4bcb7a,59aa28661b4fa510cd6153d16b4bcb38,f5d7d9261bcfa510cd6153d16b4bcb15,f5be6c2c97d36110a6a07767f053afa5,9861d5311bd7e110cd6153d16b4bcb73,95aa25b11b1be110cd6153d16b4bcb0f,acf063451b1469905b76777d8b4bcbb2,035b03ea1b57a510cd6153d16b4bcb0b,1fb0773edb92d110f359c1911596194d,9d00ba2ec319da105a37f907050131d0,e622c12d8375da1000d5ccc0deaad39d,525625bd831eda5000d5ccc0deaad387</dependencies>
         <description>The IDE Controller React component. The IDE Controller component manages the overall state of the IDE, allows to select an app and keeps track on which app is displayed.</description>
         <jsx>false</jsx>
         <module>false</module>
@@ -13,38 +13,46 @@
 	{
 		super(props);
 		
-		var strAppId = GetStringValue(this.props.app_id);
-		var strState = 'select';
+		var strAppSysId = GetStringValue(this.props.app_sys_id);
+		var strState = 'open';
 				
 		var aTabs = null;
 		var strCurrentTab = '';
 		
-		if (strAppId != '')
+		if (strAppSysId != '')
 		{
 			strState = 'edit';
-			strCurrentTab = 'sys_app,'+strAppId,
-			aTabs = [strCurrentTab];
 		}
 		
 		this.state = {
 			state: strState,
-			app_id: strAppId,
+			app_sys_id: strAppSysId,
 			app_data: null,
 			filter: '',
 			currenttab: strCurrentTab,
-			tabs: aTabs
+			tabs: aTabs,
+			uncommittedfiles: null
 		};
 
 		this.title = 'R-IDE';
+
+		this.startTimer(3000);
+	}
+
+	onTimer()
+	{
+		console.log('onTimer');
+		this.updateUncommittedFiles();
 	}
 	
-	callbackSelectApp(strAppSysId)
+	onOpenApp(strAppSysId)
 	{
-		if (this.state.app_id == strAppSysId)
+		if (this.state.app_sys_id == strAppSysId)
 		{
 			this.setState(
 				{
-					state: 'edit'
+					state: 'edit',
+					app_data: null
 				});
 			return;
 		}
@@ -52,33 +60,98 @@
 		this.setState(
 			{
 				state: 'edit',
-				app_id: strAppSysId,
+				app_sys_id: strAppSysId,
 				app_data: null,
 				currenttab: strCurrentTab,
 				tabs: [strCurrentTab]
 			});
 	}
+
+	loadAppData()
+	{
+		ServerRequest(
+			'x_snc_ride.RIDEClientAPI',
+			'GetAppData',
+			{
+				app_sys_id: this.state.app_sys_id
+			},
+			this.onServerRequestGetAppData);
+
+		ServerRequest(
+			'x_snc_ride.RIDEClientAPI',
+			'GetUserState',
+			{
+				app_sys_id: this.state.app_sys_id
+			},
+			this.onServerRequestGetUserState);			
+	}
 	
 	onServerRequestGetAppData(appdata)
 	{
-		this.setState(
-			{
-				state: 'edit',
-				app_data: appdata
-			}
-		);
-	}
-
-	callbackToolBar(strValue)
-	{
-		if (strValue == 'app_select')
+		if (this.state.state == 'loading')
 		{
 			this.setState(
 				{
-					state: 'select'
+					state: 'edit',
+					app_data: appdata
+				}
+			);
+			return;
+		}
+		this.setState(
+			{
+				app_data: appdata
+			}
+		);
+		SetCurrentBrowserUrl(GetRideUrl(appdata.sys_id));
+	}
+
+	onServerRequestGetUserState(state)
+	{
+		var aTabs = GetArrayValue(state.tabs);
+		var strCurrentTab = GetStringValue(state.currenttab);
+		if (strCurrentTab == '' && aTabs.length == 0)
+		{
+			strCurrentTab = 'sys_app,'+this.state.app_sys_id;
+			aTabs = [strCurrentTab];
+		}
+		this.setState(
+			{
+				tabs: aTabs,
+				currenttab: strCurrentTab
+			}
+		);
+	}	
+
+	onServerRequestGetAppUncommittedFiles(aFiles)
+	{
+		this.setState(
+			{
+				uncommittedfiles: aFiles
+			}
+		);
+
+	}
+
+	onToolBar(strValue)
+	{
+		if (strValue == 'app_open')
+		{
+			this.setState(
+				{
+					state: 'open'
 				});
 			return;
 		}
+		if (strValue == 'app_refresh')
+		{
+			this.loadAppData();
+			this.setState(
+				{
+					app_data: null
+				});			
+			return;
+		}		
 		if (strValue == 'app_form')
 		{
 			this.openTab('sys_app,'+this.state.app_data.sys_id);
@@ -86,9 +159,14 @@
 		}		
 		if (strValue == 'file_create')
 		{
-			DoModalMessage(this.title,'TODO: A file is to be created...',function(){});
+			this.createFile()
 			return;
 		}
+		if (strValue == 'search')
+		{
+			RedirectToUrl('/$studio.do?sysparm_transaction_scope='+this.state.app_data.sys_id,true);
+			return;
+		}			
 		if (strValue == 'manual')
 		{
 			var strManual = GetValue(this.state.app_data,'manual');
@@ -111,21 +189,31 @@
 			DoModalMessage(this.title,'The manual UI Page can no longer be found!',function(){});
 			return;
 		}					
+		if (strValue == 'repo_connect')
+		{
+			RedirectToUrl('/$studio.do?sysparm_transaction_scope='+this.state.app_data.sys_id,true);
+			return;
+		}						
+		if (strValue == 'repo_open')
+		{
+			RedirectToUrl(this.state.app_data.x_snc_devtools_repo_url,true);
+			return;
+		}		
+		if (strValue == 'repo_config')
+		{
+			this.openTab('sys_repo_config,'+this.state.app_data.repo_config_sys_id);
+			return;
+		}	
+		if (strValue == 'repo_commit')
+		{
+			RedirectToUrl('/$studio.do?sysparm_transaction_scope='+this.state.app_data.sys_id,true);
+			return;
+		}						
 		if (strValue == 'backgroundscript')
 		{
 			RedirectToUrl('/sys.scripts.modern.do',true);
 			return;
 		}			
-		if (strValue == 'repo_link')
-		{
-			RedirectToUrl(this.state.app_data.x_snc_devtools_repo_url,true);
-			return;
-		}		
-		if (strValue == 'apiref_link')
-		{
-			RedirectToUrl('https://developer.servicenow.com/dev.do#!/reference/',true);
-			return;
-		}
 		if (strValue == 'clear_cache')
 		{
 			function ClearCache(bReady)
@@ -139,16 +227,26 @@
 			DoModalConfirm(this.title,'Ready to clear the cache?',ClearCache)
 			return;
 		}			
-		if (strValue == 'fontawesome_link')
-		{
-			RedirectToUrl('https://fontawesome.com/v4/icons/',true);
-			return;
-		}	
 		if (strValue == 'transactions')
 		{
 			RedirectToUrl('/loading_transactions.do',true);
 			return;
-		}				
+		}		
+		if (strValue == 'access_analyzer')
+		{
+			RedirectToUrl('/now/access-analyzer/home',true);
+			return;
+		}					
+		if (strValue == 'docs_apiref')
+		{
+			RedirectToUrl('https://developer.servicenow.com/dev.do#!/reference/',true);
+			return;
+		}
+		if (strValue == 'docs_fontawesome')
+		{
+			RedirectToUrl('https://fontawesome.com/v4/icons/',true);
+			return;
+		}	
 		/*
 		if (strValue == 'error')
 		{
@@ -167,6 +265,10 @@
 	{
 		this.openTab(strValue);
 	}
+	onTreeNavigationFilterReset()
+	{
+		this.setState({ filter: ''});
+	}
 	
 	onInputFilter()
 	{
@@ -182,8 +284,10 @@
 		this.setState(
 			{
 				currenttab: strTab,
-				tabs: aTabs 
+				tabs: aTabs,
+				state: 'edit'
 			});
+		this.updateUserState(strTab,aTabs);
 	}
 	
 	closeTab(strTabToClose)
@@ -207,6 +311,7 @@
 					currenttab: '',
 					tabs: []
 				});
+			this.updateUserState('',[]);
 			return;
 		}
 
@@ -217,6 +322,10 @@
 				{
 					tabs: aTabs 
 				});
+			this.updateUserState(
+				strCurrentTab,
+				aTabs
+			);
 			return;
 		}
 
@@ -245,39 +354,112 @@
 				currenttab: strCurrentTab,
 				tabs: aTabs 
 			});
+		this.updateUserState(
+			strCurrentTab,
+			aTabs);
+	}
 
+	updateUserState(strCurrentTab,aTabs)
+	{
+		ServerRequest(
+			'x_snc_ride.RIDEClientAPI',
+			'SetUserState',
+			{
+				app_sys_id: this.state.app_data.sys_id,
+				state: MakeJson(
+					{
+						currenttab: strCurrentTab,
+						tabs: aTabs
+					}
+				)
+			},
+			null);
+	}
+
+	updateUncommittedFiles()
+	{
+		if (this.state.app_sys_id != null)
+		{
+			ServerRequest(
+				'x_snc_devtools.DevToolsClientAPI',
+				'GetAppUncommittedFiles',
+				{
+					app_sys_id: this.state.app_data.sys_id
+				},
+				this.onServerRequestGetAppUncommittedFiles);
+		}
+	}
+
+	createFile()
+	{
+		this.openTab('new');
+	}
+
+	onCreateFileCancel()
+	{
+		this.setState(
+			{
+				state: 'edit'
+			});
+	}
+
+	onTabNavigation(strUrl)
+	{
+		//DoModalMessage('',strUrl);
+	}
+
+	onCreateFileComplete(record)
+	{
+		var strTab = record.sys_class_name + ',' + record.sys_id;
+		var aTabs = GetArrayValue(this.state.tabs);
+		aTabs = ArrayRemoveValue(aTabs,'new');
+		aTabs = ArrayPushUnique(aTabs,strTab);
+		this.setState(
+			{
+				currenttab: strTab,
+				tabs: aTabs,
+				state: 'edit',
+				app_data: null
+			});
+		this.updateUserState(
+			strTab,
+			aTabs);	
 	}
 
 	render()
 	{
 		var strState = GetStringValue(this.state.state);
-		var strAppId = GetStringValue(this.state.app_id);
+		var strAppSysId = GetStringValue(this.state.app_sys_id);
 		var appdata = this.state.app_data;
 		
-		if (strAppId == '')
+		if (strAppSysId == '')
 		{
-			strState = 'select';
+			strState = 'open';		
 		}
-		if (strState == 'edit')
+
+
+		if (strState == 'open')
 		{
-			if (IsObject(appdata) == false)
-			{
-				strState = 'loading';
-			}
-		}
-		
-		
-		if (strState == 'select')
-		{
-			return e(Fullscreen,{},e(Centered,{},e(RIDEAppSelectorController,{ app_id: strAppId, callbackSelectApp: this.callbackSelectApp })));			
+			var appopen = e(RIDEAppOpenController,
+				{
+					app_sys_id: strAppSysId,
+					callbackSelectApp: this.onSelectApp,
+				});
+			return e(Fullscreen,{},e(Centered,{},appopen));			
 		}
 		else if (strState == 'loading')
 		{
-			ServerRequest('x_snc_ride.RIDEClientAPI','GetAppData',{ app_id: strAppId },this.onServerRequestGetAppData);
+			this.loadAppData();
 			return e(Fullscreen,{},e(Centered,{},e(Waiting,{ text: 'Loading App...' })));
 		}
-		else if (strState == 'edit')
+		else if (strState == 'edit' || strState == 'create_file')
 		{
+			if (IsObject(appdata) == false)
+			{
+				this.setState( { state: 'loading' });
+				return;
+			}
+
 			var strAppNameVersion = appdata.name + ' ' + appdata.version;
 					
 			// Logo
@@ -298,82 +480,136 @@
 			
 			// ToolBar
 			var tools = [];
+
+			// Open Apps and Create Application Files
 			tools.push({
-					text: 'Load App',
+					text: 'Open App',
 					icon: 'folder-open',
-					value: 'app_select'
+					value: 'app_open'
 				});
 			tools.push({
+					text: '',
+					tooltip: 'Reload application file data and refresh the tree navigation',
+					icon: 'refresh',
+					value: 'app_refresh'
+				});				
+			tools.push({
 					text: 'App Settings',
+					tooltip: 'Open the Custom Application (settings) form.',
 					icon: 'gear',
 					value: 'app_form'
 				});			
 			tools.push({
 					text: 'Create Application File',
+					tooltip: 'Create a new Application File for this Custom Application',
 					icon: 'plus-circle',
 					value: 'file_create'
 				});
+
+			tools.push({
+					text: '',
+					tooltip: 'Code Search (via Studio)',
+					icon: 'search',
+					value: 'search'
+				});				
 			
+			// Special Application Files
 			if (IsValidSysId(appdata.manual) == true)
 			{
 				tools.push({
 						text: 'Manual',
+						tooltip: 'Open the application manual UI Page',
 						icon: 'file-o',
 						value: 'manual'
 					});
 			}
-
 			if (IsValidSysId(appdata.default_test_suite) == true)
 			{
 				tools.push({
 						text: 'Test Suite',
+						tooltip: 'Open the application default Test Suite',
 						icon: 'life-saver',
 						value: 'testsuite'
 					});
-			}			
-			
-			tools.push({
-					text: 'Background Script',
-					icon: 'code',
-					value: 'backgroundscript'
-				});
+			}
 
-			tools.push({
-					text: 'Clear Cache',
-					icon: 'shower',
-					value: 'clear_cache'
-				});		
-
-			tools.push({
-					text: 'Active Transactions',
-					icon: 'tasks',
-					value: 'transactions'
-				});						
-
+			// Source Control			
 			if (IsValidUrl(appdata.x_snc_devtools_repo_url) == true)
 			{
 				tools.push({
 						text: '',
+						tooltip: 'Open the source control repository',
 						icon: 'code-fork',
-						value: 'repo_link'
+						value: 'repo_open'
 					});
+				tools.push({
+						text: '',
+						tooltip: 'Open the source control repository configuration form',
+						icon: 'cogs',
+						value: 'repo_config'
+					});			
+				var aUncommittedFiles = GetArrayValue(this.state.uncommittedfiles);
+				if (aUncommittedFiles.length > 0)
+				{
+					tools.push({
+							text: '',
+							tooltip: 'Commit pending changes (via Studio)',
+							icon: 'arrow-up',
+							value: 'repo_commit'
+						});									
+				}
 			}
+			else
+			{
+				tools.push({
+						text: '',
+						tooltip: 'Link this application to source control (via Studio)',
+						icon: 'cogs',
+						value: 'repo_connect'
+					});									
+			}
+
+			// Platform Tools
+			tools.push({
+					text: 'Background Script',
+					tooltip: 'Execute background scripts',
+					icon: 'code',
+					value: 'backgroundscript'
+				});
+			tools.push({
+					text: 'Clear Cache',
+					tooltip: 'Clear the cache',
+					icon: 'shower',
+					value: 'clear_cache'
+				});		
+			tools.push({
+					text: 'Active Transactions',
+					tooltip: 'Show all active transactions on all nodes of the instance',
+					icon: 'tasks',
+					value: 'transactions'
+				});						
+			tools.push({
+					text: 'Access Analyzer',
+					tooltip: 'Analyse access based on users, groups and roles to various assets',
+					icon: 'ban',
+					value: 'access_analyzer'
+				});		
+
+			// Documentation
 			tools.push({
 					text: '',
+					tooltip: 'ServiceNow Glide API documentation',
 					icon: 'user-circle',
-					value: 'apiref_link'
+					value: 'docs_apiref'
 				});			
 			tools.push({
 					text: '',
+					tooltip: 'Fontawesome 4.0 documentation',
 					icon: 'font-awesome',
-					value: 'fontawesome_link'
+					value: 'docs_fontawesome'
 				});
-/*
-			tools.push({
-					text: 'Provoke Error',
-					value: 'error'
-				});
-*/			
+
+			var toolbar = e(ToolBar, { tools: tools, callbackOnClick: this.onToolBar });
 			
 			// Leftbar header
 			var leftbarheader = e('input',
@@ -387,73 +623,122 @@
 				{
 					appdata: appdata,
 					callbackOnClick: this.callbackTreeNavigation,
+					callbackOnFilterReset: this.onTreeNavigationFilterReset,
 					filter: this.state.filter
 				});
 			
 			// Content Area
-			var strCurrentTab = GetStringValue(this.state.currenttab);
-			var aTabs = GetArrayValue(this.state.tabs);
-			var metadata = this.state.app_data._metadata;
+			var content = null;
 
-			var aItems = [];
-			for (var nTab = 0; nTab < aTabs.length; nTab++)
+			if (strState == 'create_file')
 			{
-				var strTab = aTabs[nTab];
-				var aValue = strTab.split(',');
-				var strClassName = GetValue(aValue,0);
-				var strSysId = GetValue(aValue,1);
-				var strContentUrl = '/'+strClassName+'.do?sys_id='+strSysId; 
-
-				var label = strClassName + ' - ' + strSysId;
-				
-				var file = GetValue(metadata,strSysId);
-				if (file != null)
-				{
-					label = e('span',
-						{
-							style: { pointerEvents: 'none' }
-						},
-						[
-							file.display,
-							e('br'),
-							strClassName
-						]);
-				}
-				else if (this.state.app_data.sys_id == strSysId)
-				{
-					label = 'App Settings';
-				}
-
-				var iframe = e(IFrame,{url: strContentUrl});
-				aItems.push(
+				content = e(RIDECreateFileController,
 					{
-						label: label,
-						value: strTab,
-						content: iframe
-					}
-				);
+						app_sys_id: strAppSysId,
+						callbackOnCancel: this.onCreateFileCancel,
+						callbackOnFileCreated: this.onCreateFileComplete
+					});
 			}
+			else
+			{
+				var strCurrentTab = GetStringValue(this.state.currenttab);
+				var aTabs = GetArrayValue(this.state.tabs);
+				var metadata = this.state.app_data._metadata;
 
-			var tabcontainer = e(TabContainer,
+				var aItems = [];
+				for (var nTab = 0; nTab < aTabs.length; nTab++)
 				{
-					items: aItems,
-					value: strCurrentTab,
-					callbackOnSelect: this.openTab,
-					callbackOnClose: this.closeTab
-				});
+					var strTab = aTabs[nTab];
 
-			var content = tabcontainer;
+					var label = null;
+					var tabcontent = null;
+					if (strTab == 'new')
+					{
+						label = 'Create File';
+						tabcontent = e(RIDECreateFileController,
+						{
+							app_sys_id: strAppSysId,
+							callbackOnCancel: this.onCreateFileCancel,
+							callbackOnFileCreated: this.onCreateFileComplete
+						});
+					}
+					else
+					{
+						var aValue = strTab.split(',');
+						var strClassName = GetValue(aValue,0);
+						var strSysId = GetValue(aValue,1);
+						var strContentUrl = '/'+strClassName+'.do?sys_id='+strSysId; 
+
+						label = strClassName + ' - ' + strSysId;
+						
+						var file = GetValue(metadata,strSysId);
+						if (file != null)
+						{
+							label = e('span',
+								{
+									style: { pointerEvents: 'none' }
+								},
+								[
+									file.display,
+									e('br'),
+									strClassName
+								]);
+						}
+						else if (strSysId == this.state.app_data.sys_id)
+						{
+							label = 'App Settings';
+						}
+						else if (strSysId == this.state.app_data.repo_config_sys_id)
+						{
+							label = 'Repo Config';
+						}						
+						var iframe = e(IFrame,
+							{
+								url: strContentUrl,
+								callbackOnLoad: this.onTabNavigation
+							});
+						tabcontent = iframe;
+					}
+
+					
+					aItems.push(
+						{
+							label: label,
+							value: strTab,
+							content: tabcontent
+						}
+					);
+				}
+
+				var tabcontainer = e(TabContainer,
+					{
+						items: aItems,
+						value: strCurrentTab,
+						callbackOnSelect: this.openTab,
+						callbackOnClose: this.closeTab
+					});
+				
+				content = tabcontainer;
+			}
 	
 
 			// Status Bar
-			var strStatus = strAppNameVersion;		
+			var strStatus = strAppNameVersion;
+
+			var aUncommittedFiles = GetArrayValue(this.state.uncommittedfiles);
+			if (aUncommittedFiles.length > 0)
+			{
+				strStatus += ' - ' + aUncommittedFiles.length + ' uncommitted file(s)';
+			}
 			var status = e('span',{},strStatus);
 
+
+			// Assemble the Workspace
 			var workspace = e(Workspace,{
 				logo: logo,
 				menu: null,
 				user: null,
-				toolbar: e(ToolBar, { tools: tools, callbackOnClick: this.callbackToolBar }),
+				toolbar: toolbar,
 				leftbarheader: leftbarheader,
 				treenavigation: treenavigation,
 				content: content,
@@ -471,14 +756,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-29 09:49:32</sys_created_on>
         <sys_id>0472042a1bcba510cd6153d16b4bcb21</sys_id>
-        <sys_mod_count>14</sys_mod_count>
+        <sys_mod_count>15</sys_mod_count>
         <sys_name>RIDEController</sys_name>
         <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>x_snc_reactor_component_0472042a1bcba510cd6153d16b4bcb21</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2024-11-10 21:11:55</sys_updated_on>
+        <sys_updated_on>2024-12-06 15:00:45</sys_updated_on>
         <type>script</type>
         <ui_script display_value="x_snc_ride.RIDEController">19d1c4e61bcba510cd6153d16b4bcb8c</ui_script>
         <url/>

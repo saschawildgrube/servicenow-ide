@@ -12,7 +12,7 @@
 		super(props);
 		
 		var strAppSysId = GetStringValue(this.props.app_sys_id);
-		var strState = 'select';
+		var strState = 'open';
 				
 		var aTabs = null;
 		var strCurrentTab = '';
@@ -43,7 +43,7 @@
 		this.updateUncommittedFiles();
 	}
 	
-	onSelectApp(strAppSysId)
+	onOpenApp(strAppSysId)
 	{
 		if (this.state.app_sys_id == strAppSysId)
 		{
@@ -133,11 +133,11 @@
 
 	onToolBar(strValue)
 	{
-		if (strValue == 'app_select')
+		if (strValue == 'app_open')
 		{
 			this.setState(
 				{
-					state: 'select'
+					state: 'open'
 				});
 			return;
 		}
@@ -432,18 +432,18 @@
 		
 		if (strAppSysId == '')
 		{
-			strState = 'select';		
+			strState = 'open';		
 		}
 
 
-		if (strState == 'select')
+		if (strState == 'open')
 		{
-			var appselector = e(RIDEAppSelectorController,
+			var appopen = e(RIDEAppOpenController,
 				{
 					app_sys_id: strAppSysId,
-					callbackSelectApp: this.onSelectApp,
+					callbackOpenApp: this.onOpenApp,
 				});
-			return e(Fullscreen,{},e(Centered,{},appselector));			
+			return e(Fullscreen,{},e(Centered,{},appopen));			
 		}
 		else if (strState == 'loading')
 		{
@@ -479,11 +479,11 @@
 			// ToolBar
 			var tools = [];
 
-			// Load Apps and Create Application Files
+			// Open Apps and Create Application Files
 			tools.push({
-					text: 'Load App',
+					text: 'Open App',
 					icon: 'folder-open',
-					value: 'app_select'
+					value: 'app_open'
 				});
 			tools.push({
 					text: '',
@@ -754,14 +754,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-29 09:47:59</sys_created_on>
         <sys_id>19d1c4e61bcba510cd6153d16b4bcb8c</sys_id>
-        <sys_mod_count>276</sys_mod_count>
+        <sys_mod_count>279</sys_mod_count>
         <sys_name>x_snc_ride.RIDEController</sys_name>
         <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_ui_script_19d1c4e61bcba510cd6153d16b4bcb8c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2024-12-05 16:22:36</sys_updated_on>
+        <sys_updated_on>2024-12-06 15:04:03</sys_updated_on>
         <ui_type>0</ui_type>
         <use_scoped_format>false</use_scoped_format>
         <x_snc_devtools_global>false</x_snc_devtools_global>
