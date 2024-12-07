@@ -58,6 +58,7 @@
 			'sys_ui_related_list',
 			'sys_ui_list_control',
 			'sys_db_object',
+			'sys_dictionary',
 			'sys_dictionary_override',
 			'sys_choice_set'
 		],
@@ -94,6 +95,20 @@
 			var grRecord = GetRecord(strClassName,metadata.sys_id);
 			strDisplay = grRecord.name + ' - ' + grRecord.operation;
 		}
+		else if (strClassName == 'sys_dictionary')
+		{
+			var grRecord = GetRecord(strClassName,metadata.sys_id);
+			strDisplay = grRecord.name;
+			if (grRecord.element != '')
+			{
+				strDisplay += '.' + grRecord.element;
+			}
+		}
+		else if (strClassName == 'sys_dictionary_override')
+		{
+			var grRecord = GetRecord(strClassName,metadata.sys_id);
+			strDisplay = grRecord.name + '.' + grRecord.element;
+		}		
 		else if (strClassName == 'sys_ui_list')
 		{
 
@@ -106,7 +121,6 @@
 			strDisplay = grRecord.name + ' - ' + grRecord.view.getDisplayValue() + strParent;
 		}
 		else
-		
 		{
 			strDisplay = GetStringValue(grMetaData.getDisplayValue());
 			if (strDisplay == '')
@@ -136,7 +150,6 @@
 		{
 			appdata.default_test_suite = metadata.sys_id;
 		}
-
 	}
 
 	return appdata;
@@ -145,13 +158,13 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-06-03 10:19:49</sys_created_on>
         <sys_id>9169bd0c975bed10a6a07767f053af85</sys_id>
-        <sys_mod_count>65</sys_mod_count>
+        <sys_mod_count>70</sys_mod_count>
         <sys_name>GetAppData</sys_name>
         <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_script_include_9169bd0c975bed10a6a07767f053af85</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2024-12-02 16:25:50</sys_updated_on>
+        <sys_updated_on>2024-12-07 21:53:17</sys_updated_on>
     </sys_script_include>
 </record_update>
