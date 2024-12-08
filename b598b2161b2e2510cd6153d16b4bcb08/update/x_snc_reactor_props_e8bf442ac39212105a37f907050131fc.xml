@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_reactor_props">
+    <x_snc_reactor_props action="INSERT_OR_UPDATE">
+        <component display_value="RIDEAppSelectController">eb1de5e21b03e510cd6153d16b4bcb6b</component>
+        <description>The function to be called when an application has been selected.</description>
+        <mandatory>false</mandatory>
+        <name>callbackSelectApp</name>
+        <sys_class_name>x_snc_reactor_props</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-12-08 16:33:50</sys_created_on>
+        <sys_id>e8bf442ac39212105a37f907050131fc</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>callbackSelectApp</sys_name>
+        <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
+        <sys_update_name>x_snc_reactor_props_e8bf442ac39212105a37f907050131fc</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-12-08 16:33:50</sys_updated_on>
+        <type>function</type>
+    </x_snc_reactor_props>
+</record_update>
