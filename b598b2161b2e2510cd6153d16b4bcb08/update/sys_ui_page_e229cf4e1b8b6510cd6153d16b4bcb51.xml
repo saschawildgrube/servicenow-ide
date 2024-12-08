@@ -22,7 +22,12 @@
 	]</g2:no_escape>
 	
 	<h2>Features</h2> 
-	<p>TODO: Document the features of the app here...</p>
+	<p>R-IDE is an integrated development environment - a tool for pro-coders to build and maintain custom applications.</p>
+	<p>R-IDE shows and navigates to all application files contained in an application. These files are displayed as tabs (like in classic and ServiceNow Studio). When loading the same app again the previously open tabs are stored and recovered for each user and application - so picking up work where you left it is super-convenient.</p>
+	<p>R-IDE is built with pro-coders in mind who prefer to use and see technical names rather than display names.</p>
+	<p>R-IDE navigates to application files by their related table, by their class type and by their name.</p>
+	<p>R-IDE helps to navigate to important platform tools, capabilities and documentation needed to create custom applications.</p>
+	<p>R-IDE is yet a work-in-progress project. Crucial features like source control operations or code search are not yet fully implemented - so as of now R-IDE has to send you to classic Studio to perform these.</p>
 
 	<h2>Disclaimer</h2>
 	<g2:no_escape>$[docapi.RenderDisclaimer()]</g2:no_escape>	
@@ -114,13 +119,13 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-28 11:00:29</sys_created_on>
         <sys_id>e229cf4e1b8b6510cd6153d16b4bcb51</sys_id>
-        <sys_mod_count>6</sys_mod_count>
+        <sys_mod_count>7</sys_mod_count>
         <sys_name>manual</sys_name>
         <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_ui_page_e229cf4e1b8b6510cd6153d16b4bcb51</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2024-12-01 16:11:45</sys_updated_on>
+        <sys_updated_on>2024-12-08 16:10:50</sys_updated_on>
     </sys_ui_page>
 </record_update>

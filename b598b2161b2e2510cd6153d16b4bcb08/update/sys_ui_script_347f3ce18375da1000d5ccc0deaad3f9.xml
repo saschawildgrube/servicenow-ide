@@ -260,8 +260,7 @@
 		aComponents.push(e('div', { style: { maxHeight: '80vh', overflowY: 'auto', float: 'left'}},tableUsualSuspects));
 		aComponents.push(e('div', { style: { maxHeight: '80vh', overflowY: 'auto', float: 'left' }},tableAll));
 		
-		return e('div',{},aComponents);
-		//return e(Centered,{},aComponents);
+		return e('div', { style: { paddingTop: '10px' } },aComponents);
 	}	
 }]]></script>
         <script_name>RIDECreateFileController</script_name>
@@ -269,14 +268,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2024-11-10 20:56:49</sys_created_on>
         <sys_id>347f3ce18375da1000d5ccc0deaad3f9</sys_id>
-        <sys_mod_count>52</sys_mod_count>
+        <sys_mod_count>53</sys_mod_count>
         <sys_name>x_snc_ride.RIDECreateFileController</sys_name>
         <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_ui_script_347f3ce18375da1000d5ccc0deaad3f9</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2024-12-08 00:09:42</sys_updated_on>
+        <sys_updated_on>2024-12-08 16:06:14</sys_updated_on>
         <ui_type>0</ui_type>
         <use_scoped_format>false</use_scoped_format>
         <x_snc_devtools_global>false</x_snc_devtools_global>
