@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_module">
     <sys_app_module action="INSERT_OR_UPDATE">
         <active>true</active>
-        <application display_value="ServiceNow IDE">8729cf4e1b8b6510cd6153d16b4bcb7c</application>
+        <application display_value="RIDE">8729cf4e1b8b6510cd6153d16b4bcb7c</application>
         <assessment/>
         <device_type/>
         <filter/>
@@ -15,8 +15,9 @@
         <name/>
         <order>200</order>
         <override_menu_roles>false</override_menu_roles>
-        <query>/x_snc_ide_manual.do</query>
+        <query>/x_snc_ride_manual.do</query>
         <report/>
+        <require_confirmation>false</require_confirmation>
         <roles/>
         <sys_class_name>sys_app_module</sys_class_name>
         <sys_created_by>admin</sys_created_by>
@@ -24,15 +25,15 @@
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>5b29cf4e1b8b6510cd6153d16b4bcb82</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>1</sys_mod_count>
         <sys_name>Manual</sys_name>
         <sys_overrides/>
-        <sys_package display_value="IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
+        <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
-        <sys_scope display_value="IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
+        <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_app_module_5b29cf4e1b8b6510cd6153d16b4bcb82</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2023-05-28 11:00:32</sys_updated_on>
+        <sys_updated_on>2024-12-08 15:42:32</sys_updated_on>
         <timeline_page/>
         <title>Manual</title>
         <uncancelable>false</uncancelable>
