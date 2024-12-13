@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_reactor_component">
+    <x_snc_reactor_component action="INSERT_OR_UPDATE">
+        <content_css/>
+        <dependencies>e38da2d697d36910a6a07767f053afc1</dependencies>
+        <description>The RIDETreeNavigation component renders the R-IDE tree navigation based on the given app data object.</description>
+        <jsx>false</jsx>
+        <module>false</module>
+        <name>RIDETreeNavigationController</name>
+        <role>controller</role>
+        <script><![CDATA[class IDETreeNavigationController extends ReactorComponent
+{
+	constructor(props)
+	{
+		super(props);
+		BindAllFunctionsToThis(this);
+	}
+
+	onClick()
+	{
+		if (typeof this.props.callbackOnClick == 'function')
+		{
+			this.props.callbackOnClick();
+		}
+	}
+
+	render()
+	{
+		var appdata = this.props.appdata;
+		
+		var treenavigation = { items: [] };
+		
+		//var tn_category = { label: 'By Category', items: [] };
+		var tn_bytype = { label: 'By Type', items: [] };
+		var tn_bytable = { label: 'By Table', items: [] };
+		var tn_alphabetically = { label: 'Alphabetically', items: [] };
+		
+		var aFiles = GetValue(appdata,'_metadata');
+		
+		var itemsByTypes = {};
+		var itemsByTables = {};
+		for (var nFile = 0; nFile < aFiles.length; nFile++)
+		{
+			var file = aFiles[nFile];
+
+			var strClassName = GetValue(file,'sys_class_name');
+			var strSysId = GetValue(file,'sys_id');
+			var strName = GetValue(file,'_display');
+			
+			// All
+			tn_alphabetically.items.push( { label: strName + ' ('+strClassName+')', value: strClassName+','+strSysId } );
+			
+			// By Type
+			itemsByTypes = SetValue(strName,itemsByTypes,strClassName,strSysId);
+			
+			// By Table
+			var strTable = GetValue(file,'_table');
+			if (strTable != '')
+			{
+				itemsByTables = SetValue(strName,itemsByTables,strTable,strClassName,strSysId);
+			}
+			
+		}
+		
+		var aClassNames = GetKeys(itemsByTypes);
+		aClassNames.sort();
+		for (var nClassName = 0; nClassName < aClassNames.length; nClassName++)
+		{
+			var strClassName = aClassNames[nClassName];
+			var tn_files = { label: strClassName, items: [] };
+			var itemsByType = itemsByTypes[strClassName];
+			var aSysIds = GetKeys(itemsByType);
+			for (var nSysId = 0; nSysId < aSysIds.length; nSysId++)
+			{
+				var strSysId = aSysIds[nSysId];
+				var strName = GetValue(itemsByType,strSysId);
+				tn_files.items.push( { label: strName, value: strClassName+','+strSysId } );
+			}
+			tn_bytype.items.push( tn_files );
+		}
+
+		var aTables = GetKeys(itemsByTables);
+		aTables.sort();
+		for (var nTable = 0; nTable < aTables.length; nTable++)
+		{
+			var strTable = aTables[nTable];
+			var tn_bytable_bytype = { label: strTable, items: [] };
+			var itemsByTable = itemsByTables[strTable];
+			
+			var aClassNames = GetKeys(itemsByTable);
+			aClassNames.sort();
+			for (var nClassName = 0; nClassName < aClassNames.length; nClassName++)
+			{
+				var strClassName = aClassNames[nClassName];
+				var tn_files = { label: strClassName, items: [] };
+				var itemsByTableByType = itemsByTable[strClassName];
+				var aSysIds = GetKeys(itemsByTableByType);
+				for (var nSysId = 0; nSysId < aSysIds.length; nSysId++)
+				{
+					var strSysId = aSysIds[nSysId];
+					var strName = GetValue(itemsByTableByType,strSysId);
+					tn_files.items.push( { label: strName, value: strClassName+','+strSysId } );
+				}
+				tn_bytable_bytype.items.push( tn_files );
+			}			
+			
+			
+			/*var aSysIds = GetKeys(itemsByTable);
+			for (var nSysId = 0; nSysId < aSysIds.length; nSysId++)
+			{
+				var strSysId = aSysIds[nSysId];
+				var strName = GetValue(itemsByTable,strSysId);
+				tn_files.items.push( { label: strName, value: strClassName+','+strSysId } );
+			}
+			*/
+			tn_bytable.items.push( tn_bytable_bytype );
+		}		
+		
+		if (aTables.length > 0)
+		{
+			treenavigation.items.push( tn_bytable );
+		}
+		if (aClassNames.length > 0)
+		{
+			treenavigation.items.push( tn_bytype );
+		}
+		if (aFiles.length > 0)
+		{
+			treenavigation.items.push( tn_alphabetically );
+		}
+
+		return e(TreeNavigation,
+			{
+				treenavigation: treenavigation,
+				filter: this.props.filter,
+				filter_show: false,
+				callbackOnClick: this.props.callbackOnClick,
+				collapse_all_level: 1
+			});
+	}	
+}]]></script>
+        <source_type>ui_script</source_type>
+        <sys_class_name>x_snc_reactor_component</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2023-06-11 10:43:15</sys_created_on>
+        <sys_id>035b03ea1b57a510cd6153d16b4bcb0b</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>RIDETreeNavigationController</sys_name>
+        <sys_package display_value="R-IDE" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="R-IDE">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
+        <sys_update_name>x_snc_reactor_component_035b03ea1b57a510cd6153d16b4bcb0b</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-10-19 15:00:28</sys_updated_on>
+        <type>script</type>
+        <ui_script display_value="x_snc_ride.RIDETreeNavigationController">8fdacb2a1b57a510cd6153d16b4bcbb5</ui_script>
+        <url/>
+    </x_snc_reactor_component>
+</record_update>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_snc_ride.DevToolsGetLinkDirectory</api_name>
+        <caller_access>1</caller_access>
+        <client_callable>false</client_callable>
+        <description>The DevToolsGetLinkDirectory function is called by the DevTools extension point instance class and returns an extended (or modified) link directory object that serves as the basis for the DevTools Link page.</description>
+        <name>DevToolsGetLinkDirectory</name>
+        <script><![CDATA[function DevToolsGetLinkDirectory(linkdirectory)
+{
+	linkdirectory['ServiceNow R-IDE'] =
+	[
+		{
+			url: '/x_snc_ride_start.do'
+		}
+	];
+
+	return linkdirectory;
+}]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2023-05-28 11:00:27</sys_created_on>
+        <sys_id>5e29cf4e1b8b6510cd6153d16b4bcb34</sys_id>
+        <sys_mod_count>4</sys_mod_count>
+        <sys_name>DevToolsGetLinkDirectory</sys_name>
+        <sys_package display_value="R-IDE" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="R-IDE">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
+        <sys_update_name>sys_script_include_5e29cf4e1b8b6510cd6153d16b4bcb34</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-10-19 14:49:36</sys_updated_on>
+    </sys_script_include>
+</record_update>

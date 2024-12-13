@@ -1,0 +1,847 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description>The RIDE Controller React component. The RIDE Controller component manages the overall state of the R-IDE, allows to select a scope and keeps track on which scope is displayed.</description>
+        <global>false</global>
+        <ignore_in_now_experience>false</ignore_in_now_experience>
+        <name>x_snc_ride.RIDEController</name>
+        <script><![CDATA[class RIDEController extends ReactorComponent
+{
+	constructor(props)
+	{
+		super(props);
+		
+		var strAppSysId = GetStringValue(this.props.app_sys_id);
+		var strState = 'open';
+				
+		var aTabs = null;
+		var strCurrentTab = '';
+		
+		if (strAppSysId != '')
+		{
+			strState = 'edit';
+		}
+		
+		this.state = {
+			state: strState,
+			app_sys_id: strAppSysId,
+			app_data: null,
+			filter: '',
+			currenttab: strCurrentTab,
+			tabs: aTabs,
+			uncommittedfiles: null
+		};
+
+		this.title = 'R-IDE';
+
+		this.startTimer(3000);
+	}
+
+	onTimer()
+	{
+		console.log('onTimer');
+		this.updateUncommittedFiles();
+	}
+	
+	onOpenApp(strAppSysId)
+	{
+		if (this.state.app_sys_id == strAppSysId)
+		{
+			this.setState(
+				{
+					state: 'edit',
+					app_data: null
+				});
+			return;
+		}
+		var strCurrentTab = 'sys_app,'+strAppSysId;
+		this.setState(
+			{
+				state: 'edit',
+				app_sys_id: strAppSysId,
+				app_data: null,
+				currenttab: strCurrentTab,
+				tabs: [strCurrentTab]
+			});
+		SetCurrentBrowserUrl(GetRideUrl(strAppSysId));	
+	}
+
+	loadAppData()
+	{
+		ServerRequest(
+			'x_snc_ride.RIDEClientAPI',
+			'GetAppData',
+			{
+				app_sys_id: this.state.app_sys_id
+			},
+			this.onServerRequestGetAppData);
+
+		ServerRequest(
+			'x_snc_ride.RIDEClientAPI',
+			'GetUserState',
+			{
+				app_sys_id: this.state.app_sys_id
+			},
+			this.onServerRequestGetUserState);			
+	}
+	
+	onServerRequestGetAppData(appdata)
+	{
+		if (this.state.state == 'loading')
+		{
+			this.setState(
+				{
+					state: 'edit',
+					app_data: appdata
+				}
+			);
+			return;
+		}
+		this.setState(
+			{
+				app_data: appdata
+			}
+		);
+		}
+
+	onServerRequestGetUserState(state)
+	{
+		var aTabs = GetArrayValue(state.tabs);
+		var strCurrentTab = GetStringValue(state.currenttab);
+		if (strCurrentTab == '' && aTabs.length == 0)
+		{
+			strCurrentTab = 'sys_app,'+this.state.app_sys_id;
+			aTabs = [strCurrentTab];
+		}
+		this.setState(
+			{
+				tabs: aTabs,
+				currenttab: strCurrentTab
+			}
+		);
+	}	
+
+	onServerRequestGetAppUncommittedFiles(aFiles)
+	{
+		this.setState(
+			{
+				uncommittedfiles: aFiles
+			}
+		);
+
+	}
+
+	onToolBar(strValue)
+	{
+		if (strValue == 'app_open')
+		{
+			this.setState(
+				{
+					state: 'open'
+				});
+			return;
+		}
+		if (strValue == 'app_refresh')
+		{
+			this.loadAppData();
+			this.setState(
+				{
+					app_data: null
+				});			
+			return;
+		}		
+		if (strValue == 'app_form')
+		{
+			this.openTab('sys_app,'+this.state.app_data.sys_id);
+			return;
+		}		
+		if (strValue == 'file_create')
+		{
+			this.createFile()
+			return;
+		}
+		if (strValue == 'search')
+		{
+			RedirectToUrl('/$studio.do?sysparm_transaction_scope='+this.state.app_data.sys_id,true);
+			return;
+		}			
+		if (strValue == 'manual')
+		{
+			var strManual = GetValue(this.state.app_data,'manual');
+			if (IsValidSysId(strManual))
+			{
+				this.openTab('sys_ui_page,'+strManual);
+				return;
+			}
+			DoModalMessage(this.title,'The manual UI Page can no longer be found!',function(){});
+			return;
+		}	
+		if (strValue == 'testsuite')
+		{
+			var strTestSuite = GetValue(this.state.app_data,'default_test_suite');
+			if (IsValidSysId(strTestSuite))
+			{
+				this.openTab('sys_atf_test_suite,'+strTestSuite);
+				return;
+			}
+			DoModalMessage(this.title,'The manual UI Page can no longer be found!',function(){});
+			return;
+		}					
+		if (strValue == 'repo_connect')
+		{
+			RedirectToUrl('/$studio.do?sysparm_transaction_scope='+this.state.app_data.sys_id,true);
+			return;
+		}						
+		if (strValue == 'repo_open')
+		{
+			RedirectToUrl(this.state.app_data.x_snc_devtools_repo_url,true);
+			return;
+		}		
+		if (strValue == 'repo_config')
+		{
+			this.openTab('sys_repo_config,'+this.state.app_data.repo_config_sys_id);
+			return;
+		}	
+		if (strValue == 'repo_commit')
+		{
+			RedirectToUrl('/$studio.do?sysparm_transaction_scope='+this.state.app_data.sys_id,true);
+			return;
+		}		
+		if (strValue == 'repo_apply')
+		{
+			RedirectToUrl('/$studio.do?sysparm_transaction_scope='+this.state.app_data.sys_id,true);
+			return;
+		}		
+		if (strValue == 'repo_switchbranch')
+		{
+			RedirectToUrl('/$studio.do?sysparm_transaction_scope='+this.state.app_data.sys_id,true);
+			return;
+		}			
+		if (strValue == 'repo_createbranch')
+		{
+			RedirectToUrl('/$studio.do?sysparm_transaction_scope='+this.state.app_data.sys_id,true);
+			return;
+		}								
+		if (strValue == 'backgroundscript')
+		{
+			RedirectToUrl('/sys.scripts.modern.do',true);
+			return;
+		}			
+		if (strValue == 'clear_cache')
+		{
+			function ClearCache(bReady)
+			{
+				if (bReady == true)
+				{
+					RedirectToUrl('/cache.do',true);
+					return;
+				}
+			}
+			DoModalConfirm(this.title,'Ready to clear the cache?',ClearCache)
+			return;
+		}			
+		if (strValue == 'transactions')
+		{
+			RedirectToUrl('/loading_transactions.do',true);
+			return;
+		}		
+		if (strValue == 'access_analyzer')
+		{
+			RedirectToUrl('/now/access-analyzer/home',true);
+			return;
+		}					
+		if (strValue == 'docs_apiref')
+		{
+			RedirectToUrl('https://developer.servicenow.com/dev.do#!/reference/',true);
+			return;
+		}
+		if (strValue == 'docs_fontawesome')
+		{
+			RedirectToUrl('https://fontawesome.com/v4/icons/',true);
+			return;
+		}	
+		/*
+		if (strValue == 'error')
+		{
+			DoModalMessage(this.title,'Provoking an error...',function(){});
+			this.setState(
+				{
+					state: 'error'
+				});			
+			return;
+		}*/
+		DoModalMessage(this.title,'TODO: Not supported toolbar icon...',function(){});
+
+	}
+	
+	onTreeNavigationClick(strValue)
+	{
+		this.openTab(strValue);
+	}
+	onTreeNavigationFilterReset()
+	{
+		this.setState({ filter: ''});
+	}
+	
+	onInputFilter()
+	{
+		var strValue = GetStringValue(event.target.value);
+		this.setState({ filter: strValue });
+	}
+
+	openTab(strTab)
+	{
+		var strTab = GetStringValue(strTab);
+		var aTabs = GetArrayValue(this.state.tabs);
+		aTabs = ArrayPushUnique(aTabs,strTab);
+		this.setState(
+			{
+				currenttab: strTab,
+				tabs: aTabs,
+				state: 'edit'
+			});
+		this.updateUserState(strTab,aTabs);
+	}
+	
+	closeTab(strTabToClose)
+	{
+		var strTabToClose = GetStringValue(strTabToClose);
+		var strCurrentTab = this.state.currenttab;
+		var aTabs = GetArrayValue(this.state.tabs);
+
+		if (aTabs.length == 0)
+		{
+			this.setState(
+				{
+					currenttab: ''
+				});
+			return;
+		}
+		if (aTabs.length == 1)
+		{
+			this.setState(
+				{
+					currenttab: '',
+					tabs: []
+				});
+			this.updateUserState('',[]);
+			return;
+		}
+
+		if (strCurrentTab != strTabToClose)
+		{
+			aTabs = ArrayRemoveValue(aTabs,strTabToClose);
+			this.setState(
+				{
+					tabs: aTabs 
+				});
+			this.updateUserState(
+				strCurrentTab,
+				aTabs
+			);
+			return;
+		}
+
+		var nCurrentTab = -1;
+		for (var nTab = 0; nTab < aTabs.length; nTab++)
+		{
+			if (strCurrentTab == aTabs[nTab])
+			{
+				nCurrentTab = nTab;
+			}
+		}
+		if (nCurrentTab != -1)
+		{
+			if (nCurrentTab == 0)
+			{
+				strCurrentTab = GetValue(aTabs,1);
+			}
+			else 
+			{
+				strCurrentTab = GetValue(aTabs, nCurrentTab - 1);	
+			}
+		}
+		aTabs = ArrayRemoveValue(aTabs,strTabToClose);
+		this.setState(
+			{
+				currenttab: strCurrentTab,
+				tabs: aTabs 
+			});
+		this.updateUserState(
+			strCurrentTab,
+			aTabs);
+	}
+
+	updateUserState(strCurrentTab,aTabs)
+	{
+		ServerRequest(
+			'x_snc_ride.RIDEClientAPI',
+			'SetUserState',
+			{
+				app_sys_id: this.state.app_data.sys_id,
+				state: MakeJson(
+					{
+						currenttab: strCurrentTab,
+						tabs: aTabs
+					}
+				)
+			},
+			null);
+	}
+
+	updateUncommittedFiles()
+	{
+		if (this.state.app_sys_id != null)
+		{
+			ServerRequest(
+				'x_snc_devtools.DevToolsClientAPI',
+				'GetAppUncommittedFiles',
+				{
+					app_sys_id: this.state.app_sys_id
+				},
+				this.onServerRequestGetAppUncommittedFiles);
+		}
+	}
+
+	createFile()
+	{
+		this.openTab('new');
+	}
+
+	onCreateFileCancel()
+	{
+		this.setState(
+			{
+				state: 'edit'
+			});
+	}
+
+	onTabNavigation(strUrl)
+	{
+		//DoModalMessage('',strUrl);
+	}
+
+	onCreateFileComplete(record)
+	{
+		var strTab = record.sys_class_name + ',' + record.sys_id;
+		var aTabs = GetArrayValue(this.state.tabs);
+		aTabs = ArrayRemoveValue(aTabs,'new');
+		aTabs = ArrayPushUnique(aTabs,strTab);
+		this.setState(
+			{
+				currenttab: strTab,
+				tabs: aTabs,
+				state: 'edit',
+				app_data: null
+			});
+		this.updateUserState(
+			strTab,
+			aTabs);	
+	}
+
+	onButtonOpenInNewBrowserTab(strValue)
+	{
+		var aValue = strValue.split(',');
+		var strClassName = GetValue(aValue,0);
+		var strSysId = GetValue(aValue,1);
+
+		var metadata = this.state.app_data._metadata;
+		var strUrl = GetStringValue(GetValue(metadata,strSysId,'_attributes','url'));
+		if (strUrl == '')
+		{
+			var strUrl = '/'+strClassName+'.do?sys_id='+strSysId;
+		}
+		else
+		{
+			strUrl = StringReplace(strUrl,'{sys_id}',strSysId);
+		}
+		RedirectToUrl(strUrl,true);
+	}
+
+	render()
+	{
+		var strState = GetStringValue(this.state.state);
+		var strAppSysId = GetStringValue(this.state.app_sys_id);
+		var appdata = this.state.app_data;
+		
+		if (strAppSysId == '')
+		{
+			strState = 'open';		
+		}
+
+
+		if (strState == 'open')
+		{
+			var appopen = e(RIDEAppOpenController,
+				{
+					app_sys_id: strAppSysId,
+					callbackOpenApp: this.onOpenApp,
+				});
+			return e(Fullscreen,{},e(Centered,{},appopen));			
+		}
+		else if (strState == 'loading')
+		{
+			this.loadAppData();
+			return e(Fullscreen,{},e(Centered,{},e(Waiting,{ text: 'Loading App...' })));
+		}
+		else if (strState == 'edit' || strState == 'create_file')
+		{
+			if (IsObject(appdata) == false)
+			{
+				this.setState( { state: 'loading' });
+				return;
+			}
+
+			var strAppNameVersion = appdata.name + ' ' + appdata.version;
+					
+			// Logo
+			var logo = e('div',
+				{
+					style:
+					{
+						fontWeight: 'bold',
+						fontSize: '16px',
+						margin: '5px'
+					}
+				},
+				this.title + ' - ' + appdata.name_clean);
+			
+			// Menu
+			
+			// User
+			
+			// ToolBar
+			var tools = [];
+
+			// Open Apps and Create Application Files
+			tools.push({
+					text: 'Open App',
+					icon: 'folder-open',
+					value: 'app_open'
+				});
+			tools.push({
+					text: '',
+					tooltip: 'Reload application file data and refresh the tree navigation',
+					icon: 'refresh',
+					value: 'app_refresh'
+				});				
+			tools.push({
+					text: 'App Settings',
+					tooltip: 'Open the Custom Application (settings) form.',
+					icon: 'gear',
+					value: 'app_form'
+				});			
+			tools.push({
+					text: 'Create Application File',
+					tooltip: 'Create a new Application File for this Custom Application',
+					icon: 'plus-circle',
+					value: 'file_create'
+				});
+
+			tools.push({
+					text: '',
+					tooltip: 'Code Search (via Studio)',
+					icon: 'search',
+					value: 'search'
+				});				
+			
+			// Special Application Files
+			if (IsValidSysId(appdata.manual) == true)
+			{
+				tools.push({
+						text: 'Manual',
+						tooltip: 'Open the application manual UI Page',
+						icon: 'file-o',
+						value: 'manual'
+					});
+			}
+			if (IsValidSysId(appdata.default_test_suite) == true)
+			{
+				tools.push({
+						text: 'Test Suite',
+						tooltip: 'Open the application default Test Suite',
+						icon: 'life-saver',
+						value: 'testsuite'
+					});
+			}
+
+			// Source Control			
+			if (IsValidUrl(appdata.x_snc_devtools_repo_url) == true)
+			{
+				tools.push({
+						text: '',
+						tooltip: 'Open the source control repository',
+						icon: 'code-fork',
+						value: 'repo_open'
+					});
+				tools.push({
+						text: '',
+						tooltip: 'Open the source control repository configuration form',
+						icon: 'cogs',
+						value: 'repo_config'
+					});			
+				var aUncommittedFiles = GetArrayValue(this.state.uncommittedfiles);
+				if (aUncommittedFiles.length > 0)
+				{
+					tools.push({
+							text: '',
+							tooltip: 'Commit pending changes (via Studio)',
+							icon: 'arrow-up',
+							value: 'repo_commit'
+						});									
+				}
+				tools.push({
+						text: '',
+						tooltip: 'Apply remote changes (via Studio)',
+						icon: 'arrow-down',
+						value: 'repo_apply'
+					});		
+				tools.push({
+						text: '',
+						tooltip: 'Switch Branch (via Studio)',
+						icon: 'arrows-h',
+						value: 'repo_switchbranch'
+					});								
+				tools.push({
+						text: '',
+						tooltip: 'Create new branch (via Studio)',
+						icon: 'plus',
+						value: 'repo_createbranch'
+					});											
+			}
+			else
+			{
+				tools.push({
+						text: '',
+						tooltip: 'Link this application to source control (via Studio)',
+						icon: 'cogs',
+						value: 'repo_connect'
+					});									
+			}
+
+			// Platform Tools
+			tools.push({
+					text: 'Background Script',
+					tooltip: 'Execute background scripts',
+					icon: 'code',
+					value: 'backgroundscript'
+				});
+			tools.push({
+					text: 'Clear Cache',
+					tooltip: 'Clear the cache',
+					icon: 'shower',
+					value: 'clear_cache'
+				});		
+			tools.push({
+					text: 'Active Transactions',
+					tooltip: 'Show all active transactions on all nodes of the instance',
+					icon: 'tasks',
+					value: 'transactions'
+				});						
+			tools.push({
+					text: 'Access Analyzer',
+					tooltip: 'Analyse access based on users, groups and roles to various assets',
+					icon: 'ban',
+					value: 'access_analyzer'
+				});		
+
+			// Documentation
+			tools.push({
+					text: '',
+					tooltip: 'ServiceNow Glide API documentation',
+					icon: 'user-circle',
+					value: 'docs_apiref'
+				});			
+			tools.push({
+					text: '',
+					tooltip: 'Fontawesome 4.0 documentation',
+					icon: 'font-awesome',
+					value: 'docs_fontawesome'
+				});
+
+			var toolbar = e(ToolBar, { tools: tools, callbackOnClick: this.onToolBar });
+			
+			// Leftbar header
+			var leftbarheader = e('input',
+				{
+					onInput: this.onInputFilter,
+					value: this.state.filter
+				});
+			
+			// TreeNavigation
+			var treenavigation = e(RIDETreeNavigationController,
+				{
+					appdata: appdata,
+					callbackOnClick: this.onTreeNavigationClick,
+					callbackOnFilterReset: this.onTreeNavigationFilterReset,
+					filter: this.state.filter
+				});
+			
+			// Content Area
+			var content = null;
+
+			if (strState == 'create_file')
+			{
+				content = e(RIDECreateFileController,
+					{
+						app_sys_id: strAppSysId,
+						callbackOnCancel: this.onCreateFileCancel,
+						callbackOnFileCreated: this.onCreateFileComplete
+					});
+			}
+			else
+			{
+				var strCurrentTab = GetStringValue(this.state.currenttab);
+				var aTabs = GetArrayValue(this.state.tabs);
+				var metadata = this.state.app_data._metadata;
+
+				var aItems = [];
+				for (var nTab = 0; nTab < aTabs.length; nTab++)
+				{
+					var strTab = aTabs[nTab];
+
+					var label = null;
+					var tabcontent = null;
+					if (strTab == 'new')
+					{
+						label = 'Create File';
+						tabcontent = e(RIDECreateFileController,
+						{
+							app_sys_id: strAppSysId,
+							callbackOnCancel: this.onCreateFileCancel,
+							callbackOnFileCreated: this.onCreateFileComplete
+						});
+					}
+					else
+					{
+						var aValue = strTab.split(',');
+						var strClassName = GetValue(aValue,0);
+						var strSysId = GetValue(aValue,1);
+						var strContentUrl = '/'+strClassName+'.do?sys_id='+strSysId;
+
+						label = strClassName + ' - ' + strSysId;
+						
+						var file = GetValue(metadata,strSysId);
+						if (file != null)
+						{
+							label = e('span',
+								{
+									style: { pointerEvents: 'none' }
+								},
+								[
+									file.display,
+									e('br'),
+									strClassName
+								]);
+
+							if (GetValue(file,'_attributes','separate_browser_tab') == true)
+							{
+								tabcontent =
+									[
+										e(Centered,{},
+											[
+												e('p',{},'This record must be edited in a separate browser tab because for strange reasons the special GUI to be used would not work in an iframe. Don\'t ask!'),
+												e(Button,{
+													text: 'Open in new browser tab',
+													value: strCurrentTab,
+													callbackOnClick: this.onButtonOpenInNewBrowserTab,
+													style: {}
+												})
+											]
+										)
+									];
+							}
+
+						}
+						else if (strSysId == this.state.app_data.sys_id)
+						{
+							label = 'App Settings';
+						}
+						else if (strSysId == this.state.app_data.repo_config_sys_id)
+						{
+							label = 'Repo Config';
+						}
+						if (tabcontent == null)
+						{
+							var iframe = e(IFrame,
+								{
+									url: strContentUrl,
+									callbackOnLoad: this.onTabNavigation
+								});
+							tabcontent = iframe;
+						}
+					}
+
+					
+					aItems.push(
+						{
+							label: label,
+							value: strTab,
+							content: tabcontent
+						}
+					);
+				}
+
+				var tabcontainer = e(TabContainer,
+					{
+						items: aItems,
+						value: strCurrentTab,
+						callbackOnSelect: this.openTab,
+						callbackOnClose: this.closeTab
+					});
+				
+				content = tabcontainer;
+			}
+	
+
+			// Status Bar
+			var strStatus = strAppNameVersion;
+
+			var aUncommittedFiles = GetArrayValue(this.state.uncommittedfiles);
+			if (aUncommittedFiles.length > 0)
+			{
+				strStatus += ' - ' + aUncommittedFiles.length + ' uncommitted file(s)';
+			}
+			if (this.state.app_data.branch != '')
+			{
+				strStatus += ' - Branch: ' + this.state.app_data.branch;
+			}
+			var status = e('span',{},strStatus);
+
+
+			// Assemble the Workspace
+			var workspace = e(Workspace,{
+				logo: logo,
+				menu: null,
+				user: null,
+				toolbar: toolbar,
+				leftbarheader: leftbarheader,
+				treenavigation: treenavigation,
+				content: content,
+				sidebar: null,
+				status: status 
+			});
+
+			return workspace;
+		}
+		return e(ErrorMessage,{ text: 'ERROR: INVALID STATE' });
+	}	
+}]]></script>
+        <script_name>RIDEController</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2023-05-29 09:47:59</sys_created_on>
+        <sys_id>19d1c4e61bcba510cd6153d16b4bcb8c</sys_id>
+        <sys_mod_count>298</sys_mod_count>
+        <sys_name>x_snc_ride.RIDEController</sys_name>
+        <sys_package display_value="R-IDE" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="R-IDE">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
+        <sys_update_name>sys_ui_script_19d1c4e61bcba510cd6153d16b4bcb8c</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-12-08 01:39:40</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+        <x_snc_devtools_global>false</x_snc_devtools_global>
+    </sys_ui_script>
+</record_update>

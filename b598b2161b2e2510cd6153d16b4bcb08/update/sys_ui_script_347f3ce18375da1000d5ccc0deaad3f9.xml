@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description>Allows to select an existing apps or to create a new one.</description>
+        <global>false</global>
+        <ignore_in_now_experience>false</ignore_in_now_experience>
+        <name>x_snc_ride.RIDECreateFileController</name>
+        <script><![CDATA[class RIDECreateFileController extends ReactorComponent
+{
+	constructor(props)
+	{
+		super(props);
+		this.state = {
+			app_file_classes: null,
+			selected_class: null,
+			filter_label: '',
+			filter_name: ''
+		};
+	}
+
+	onInputFilterLabel()
+	{
+		var strValue = GetStringValue(event.target.value);
+		this.setState( { filter_label: strValue });
+	}	
+
+	onInputFilterName()
+	{
+		var strValue = GetStringValue(event.target.value);
+		this.setState( { filter_name: strValue });
+	}		
+	
+	onClickSelect(event)
+	{
+		var strClassName = GetStringValue(event.target.attributes.value.value);
+		this.setState(
+			{
+				selected_class: strClassName
+			});
+	}	
+
+	onServerRequestGetAppFileClasses(response)
+	{
+		this.setState(
+			{
+				app_file_classes: response
+			}
+		);
+	}		
+
+	onLoadIFrame(strUrl)
+	{
+		var strClassName = this.state.selected_class;
+		if (strClassName == '')
+		{
+			return;
+		}
+		if (strUrl.indexOf(strClassName+'.do?sys_id=') == -1)
+		{
+			return;
+		}
+		var nSysId = strUrl.indexOf('sys_id=');
+		var strSysId = strUrl.substr(nSysId+7,32);
+		if (IsValidSysId(strSysId) == false)
+		{
+			//this.callbackOnCancel();
+			return;
+		}
+
+		//DoModalMessage('Creating Application File','Created file '+strClassName +'.' + strSysId,function(){});
+
+		var record = {
+			sys_class_name: strClassName,
+			sys_id: strSysId
+		};
+
+		this.onFileCreated(record);
+	}
+
+	onFileCreated(record)
+	{
+		if (IsFunction(this.props.callbackOnFileCreated) == true)
+		{
+			this.props.callbackOnFileCreated(record);
+		}
+		this.setState(
+			{
+				selected_class: null
+			}
+		);
+	}	
+
+	render()
+	{
+		var strAppSysId = this.props.app_sys_id;
+		if (IsValidSysId(strAppSysId) == false)
+		{
+			return e(Centered,{},e(ErrorMessage,{ text: 'RIDECreateFileController: property app_sys_id is required!' }));
+		}
+
+		var app_file_classes = this.state.app_file_classes;
+		if (app_file_classes == null)
+		{
+			ServerRequest(
+				'x_snc_ride.RIDEClientAPI',
+				'GetAppFileClasses',
+				{},
+				this.onServerRequestGetAppFileClasses);
+			return e(Centered,{},e(Waiting,{ text: 'Loading Application File Classes...' }));
+		}
+
+		var strSelectClass = GetStringValue(this.state.selected_class);
+		if (strSelectClass != '')
+		{
+			var strContentUrl = '/'+strSelectClass+'.do?sys_id=&sysparm_query=sys_scope%3D'+strAppSysId;
+			var iframe =  e(IFrame,
+				{
+					url: strContentUrl,
+					callbackOnLoad: this.onLoadIFrame
+				});
+
+			return iframe; 
+		}
+
+
+		// Usual Suspects
+
+		var aRows = [];
+
+		var aClassNames = GetKeys(app_file_classes);
+
+		aClassNames.sort();
+
+		for (var nClass = 0; nClass < aClassNames.length; nClass++)
+		{
+			var strClassName = aClassNames[nClass];
+			var app_file_class = app_file_classes[strClassName];
+			if (app_file_class.usual_suspects == true)
+			{
+
+				var strLabel = GetValue(app_file_class,'label');
+				
+				var elementLinkName = e('a',
+					{
+						onClick: this.onClickSelect,
+						value: strClassName
+					},
+					strLabel);
+
+				var elementLinkClassName = e('a',
+					{
+						onClick: this.onClickSelect,
+						value: strClassName
+					},
+					strClassName);				
+				
+				var aCells = [
+					{ content: elementLinkName },
+					{ content: elementLinkClassName }
+				];
+
+				
+				aRows.push(aCells);
+			}
+		}
+		var tableUsualSuspects = e(TableComponent,{ cells: aRows, classname: 'ride_app_selector' },null);
+
+
+		// All
+
+		var aRows = [];
+
+
+		var componentFilterNameInput = e('input',{
+				style: { width: '100%'},
+				value: this.state.filter_name,
+				onInput: this.onInputFilterName,
+				},null);
+
+		var componentFilterLabelInput = e('input',{
+				style: { width: '100%'},
+				value: this.state.filter_label,
+				onInput: this.onInputFilterLabel,
+				},null);				
+
+		var aHeaders = [
+			{ content: componentFilterLabelInput },
+			{ content: componentFilterNameInput }
+			];
+			
+		aRows.push(aHeaders);
+
+		var aClassNames = GetKeys(app_file_classes);
+
+		aClassNames.sort();
+
+		for (var nClass = 0; nClass < aClassNames.length; nClass++)
+		{
+			var strClassName = aClassNames[nClass];
+			var app_file_class = app_file_classes[strClassName];
+			var strLabel = GetValue(app_file_class,'label');
+			
+			var bShow = false;
+
+			if (this.state.filter_name == '' && this.state.filter_label == '')
+			{
+				bShow = true;
+			}
+			else
+			{
+				bShow = true;
+				if (this.state.filter_name != '')
+				{
+					if (strClassName.indexOf(this.state.filter_name) == -1)
+					{
+						bShow = false;
+					}
+				}
+				if (this.state.filter_label != '')
+				{
+					var strLabelLowerCase = strLabel.toLowerCase();
+					var strLabelFilterLowerCase = this.state.filter_label.toLowerCase();
+					if (strLabelLowerCase.indexOf(strLabelFilterLowerCase) == -1)
+					{
+						bShow = false;
+					}
+				}		
+			}
+
+			if (bShow == true)
+			{
+				var elementLinkName = e('a',
+					{
+						onClick: this.onClickSelect,
+						value: strClassName
+					},
+					strLabel);
+
+				var elementLinkClassName = e('a',
+					{
+						onClick: this.onClickSelect,
+						value: strClassName
+					},
+					strClassName);				
+				
+				var aCells = [
+					{ content: elementLinkName },
+					{ content: elementLinkClassName }
+				];
+
+				
+				aRows.push(aCells);
+			}		
+
+		}
+		var tableAll = e(TableComponent,{ cells: aRows, classname: 'ride_app_selector' },null);
+
+	
+		var aComponents = [];
+		aComponents.push(e('div', { style: { maxHeight: '80vh', overflowY: 'auto', float: 'left'}},tableUsualSuspects));
+		aComponents.push(e('div', { style: { maxHeight: '80vh', overflowY: 'auto', float: 'left' }},tableAll));
+		
+		return e('div', { style: { paddingTop: '10px' } },aComponents);
+	}	
+}]]></script>
+        <script_name>RIDECreateFileController</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-11-10 20:56:49</sys_created_on>
+        <sys_id>347f3ce18375da1000d5ccc0deaad3f9</sys_id>
+        <sys_mod_count>53</sys_mod_count>
+        <sys_name>x_snc_ride.RIDECreateFileController</sys_name>
+        <sys_package display_value="R-IDE" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="R-IDE">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
+        <sys_update_name>sys_ui_script_347f3ce18375da1000d5ccc0deaad3f9</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-12-08 16:06:14</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+        <x_snc_devtools_global>false</x_snc_devtools_global>
+    </sys_ui_script>
+</record_update>

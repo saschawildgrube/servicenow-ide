@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_reactor_component">
+    <x_snc_reactor_component action="INSERT_OR_UPDATE">
+        <content_css/>
+        <dependencies>9191395fdbd21510f359c191159619ef,8572ee00971fed10a6a07767f053af21,ae6ec01c97172110a6a07767f053af56,9861d5311bd7e110cd6153d16b4bcb73</dependencies>
+        <description>Allows to select an existing app.</description>
+        <jsx>false</jsx>
+        <module>false</module>
+        <name>RIDEAppSelectController</name>
+        <role>controller</role>
+        <script><![CDATA[class RIDEAppSelectController extends ReactorComponent
+{
+	constructor(props)
+	{
+		super(props);
+		this.state = {
+			apps: null
+		};
+	}
+	
+	onServerRequestGetApps(response)
+	{
+		Log('onServerRequestGetApps');
+		this.setState(
+			{
+				apps: response
+			}
+		);
+	}	
+	
+	onSelectApp(event)
+	{
+		var strAppSysId = GetStringValue(event.target.attributes.value.value);
+		if (IsFunction(this.props.callbackSelectApp) == true)
+		{
+			this.props.callbackSelectApp(strAppSysId);
+		}	
+	}
+	
+	onCancel()
+	{
+		if (IsFunction(this.props.callbackSelectApp) == true)
+		{
+			this.props.callbackSelectApp(this.props.app_sys_id);
+		}			
+	}
+
+	render()
+	{
+		var aApps = GetArrayValue(this.state.apps);
+		if (aApps.length == 0)
+		{
+			ServerRequest('x_snc_ride.RIDEClientAPI','GetApps',{ },this.onServerRequestGetApps);
+			return e(Centered,{},e(Waiting,{ text: 'Loading Apps...' }));
+		}
+		
+		var aRows = [];
+		
+		/*
+		var aHeaders = [
+			{
+				header: true,
+				content: 'Name'
+			},
+			{
+				header: true,
+				content: 'Scope'
+			}
+		];
+		aRows.push(aHeaders);
+		*/
+
+		for (var nApp = 0; nApp < aApps.length; nApp++)
+		{
+			var app = aApps[nApp];
+			var elementLink = e('a',
+				{
+					onClick: this.onSelectApp,
+					value: app.sys_id
+				},
+				app.name_clean + ' ' + app.version);
+			
+			var aCells = [
+				{ content: elementLink },
+				{ content: app.scope }
+			];
+
+			
+			aRows.push(aCells);
+		}
+		var table = e(TableComponent,{ cells: aRows, classname: 'ride_app_selector' },null);
+
+		var cancelButton = null;
+		var strAppSysId = GetStringValue(this.props.app_sys_id);
+		if (strAppSysId != '')
+		{
+			cancelButton = e(Button,{ text: 'Cancel', callbackOnClick: this.onCancel});
+		}
+		
+		var aComponents = [];
+		aComponents.push(e('div', { style: { maxHeight: '80vh', overflowY: 'auto' }},table));
+		if (cancelButton != null)
+		{
+			aComponents.push(e('div', { style: { float: 'right', marginTop: '10px'}},cancelButton));
+		}
+		
+		return e('div',{},aComponents);
+	}	
+}]]></script>
+        <source_type>ui_script</source_type>
+        <sys_class_name>x_snc_reactor_component</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2023-05-29 17:35:42</sys_created_on>
+        <sys_id>eb1de5e21b03e510cd6153d16b4bcb6b</sys_id>
+        <sys_mod_count>8</sys_mod_count>
+        <sys_name>RIDEAppSelectController</sys_name>
+        <sys_package display_value="R-IDE" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="R-IDE">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
+        <sys_update_name>x_snc_reactor_component_eb1de5e21b03e510cd6153d16b4bcb6b</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-12-06 14:48:41</sys_updated_on>
+        <type>script</type>
+        <ui_script display_value="x_snc_ride.RIDEAppSelectController">77aca1e21b03e510cd6153d16b4bcb9c</ui_script>
+        <url/>
+    </x_snc_reactor_component>
+</record_update>

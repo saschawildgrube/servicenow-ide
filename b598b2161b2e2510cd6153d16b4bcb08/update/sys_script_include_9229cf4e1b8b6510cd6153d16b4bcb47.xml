@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_snc_ride.DevToolsGetApplicationStatus</api_name>
+        <caller_access>1</caller_access>
+        <client_callable>false</client_callable>
+        <description>The function DevToolsGetApplicationStatus is called by the DevTools extension point instance class and returns the application status object with additional status information to be displayed on the "DevTools Application Overview" page.</description>
+        <name>DevToolsGetApplicationStatus</name>
+        <script><![CDATA[function DevToolsGetApplicationStatus(status)
+{
+	var GetValue = x_snc_devtools.GetValue;
+	var SetValue = x_snc_devtools.SetValue;
+	var GetKeys = x_snc_devtools.GetKeys;
+	var GetAppRecord = x_snc_devtools.GetAppRecord;
+	var HtmlRenderLink = x_snc_devtools.HtmlRenderLink;
+	var GetInstanceUrl = x_snc_devtools.GetInstanceUrl;
+	var GetAppName = x_snc_devtools.GetAppName;
+
+	SetValue(GetAppName('x_snc_ride'),status,'columns','ride','header');
+	
+	var aApps = GetKeys(GetValue(status,'applications'));
+	for (var nApp = 0; nApp < aApps.length; nApp++)
+	{
+		var grApp = GetAppRecord(aApps[nApp]);
+		var strRIDELink = HtmlRenderLink(GetRideUrl(grApp),GetAppName('x_snc_ride'),true); 
+		SetValue(strRIDELink,status,'applications',aApps[nApp],'ride');
+	}
+
+	return status;
+}]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2023-05-28 11:00:28</sys_created_on>
+        <sys_id>9229cf4e1b8b6510cd6153d16b4bcb47</sys_id>
+        <sys_mod_count>18</sys_mod_count>
+        <sys_name>DevToolsGetApplicationStatus</sys_name>
+        <sys_package display_value="R-IDE" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="R-IDE">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
+        <sys_update_name>sys_script_include_9229cf4e1b8b6510cd6153d16b4bcb47</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-12-08 17:22:51</sys_updated_on>
+    </sys_script_include>
+</record_update>

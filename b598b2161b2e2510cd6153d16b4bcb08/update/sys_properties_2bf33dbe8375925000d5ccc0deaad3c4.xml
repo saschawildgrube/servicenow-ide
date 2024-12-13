@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties">
+    <sys_properties action="INSERT_OR_UPDATE">
+        <choices/>
+        <description>Comma separated list of tables that should always be offered when creating a new application file.</description>
+        <ignore_cache>true</ignore_cache>
+        <is_private>false</is_private>
+        <name>x_snc_ride.usual_suspects</name>
+        <read_roles/>
+        <suffix>usual_suspects</suffix>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-11-14 22:00:03</sys_created_on>
+        <sys_id>2bf33dbe8375925000d5ccc0deaad3c4</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_snc_ride.usual_suspects</sys_name>
+        <sys_package display_value="R-IDE" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="R-IDE">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
+        <sys_update_name>sys_properties_2bf33dbe8375925000d5ccc0deaad3c4</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-11-14 22:00:03</sys_updated_on>
+        <type>string</type>
+        <value>sys_script_include,sys_script,sys_ui_action,sys_properties,sys_ui_script</value>
+        <write_roles/>
+    </sys_properties>
+    <sys_translated_text action="delete_multiple" query="documentkey=2bf33dbe8375925000d5ccc0deaad3c4"/>
+</record_update>
