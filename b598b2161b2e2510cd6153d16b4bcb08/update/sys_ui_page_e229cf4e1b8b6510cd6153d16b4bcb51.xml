@@ -88,6 +88,7 @@
 
 	<h3>React(or) Components</h3>
 	<g2:no_escape>$[x_snc_reactor.HtmlRenderReactorComponents('x_snc_ride')]</g2:no_escape>			
+
 <!--
 	<h3>UI Actions</h3>
 	<g2:no_escape>$[docapi.RenderUIActions()]</g2:no_escape>		
@@ -112,6 +113,13 @@
 	<h3>Business Rules</h3>
 	<g2:no_escape>$[docapi.RenderBusinessRules()]</g2:no_escape>	
 	-->
+
+	<h3>Dependencies</h3>
+	<g2:no_escape>$[docapi.RenderDependencies()]</g2:no_escape>		
+
+	<h3>Technical Debts</h3>
+	<g2:no_escape>$[docapi.RenderTechnicalDebts()]</g2:no_escape>	
+
 	<h2>License</h2>
 	<g2:no_escape>$[docapi.RenderCopyright(2024,'Sascha Wildgrube')]</g2:no_escape>
 	<g2:no_escape>$[docapi.RenderLicense()]</g2:no_escape>
@@ -130,13 +138,13 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-28 11:00:29</sys_created_on>
         <sys_id>e229cf4e1b8b6510cd6153d16b4bcb51</sys_id>
-        <sys_mod_count>11</sys_mod_count>
+        <sys_mod_count>12</sys_mod_count>
         <sys_name>manual</sys_name>
         <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_ui_page_e229cf4e1b8b6510cd6153d16b4bcb51</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2024-12-08 17:22:01</sys_updated_on>
+        <sys_updated_on>2024-12-13 11:37:57</sys_updated_on>
     </sys_ui_page>
 </record_update>
