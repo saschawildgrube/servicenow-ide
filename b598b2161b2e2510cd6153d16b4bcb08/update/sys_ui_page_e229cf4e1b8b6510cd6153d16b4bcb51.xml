@@ -23,7 +23,7 @@
 	
 	<h2>Features</h2> 
 	<p>R-IDE is an integrated development environment - a tool for pro-coders to build and maintain custom applications.</p>
-	<p>R-IDE shows and navigates to all application files contained in an application. These files are displayed as tabs (like in classic and ServiceNow Studio). When loading the same app again the previously open tabs are stored and recovered for each user and application - so picking up work where you left it is super-convenient.</p>
+	<p>R-IDE shows and navigates to all application files contained in an application. These files are displayed as tabs (like in classic and ServiceNow Studio). When loading the same app again the previously open tabs are restored for each user and application - so picking up work where you left it is super-convenient.</p>
 	<p>R-IDE is built with pro-coders in mind who prefer to use and see technical names rather than display names.</p>
 	<p>R-IDE navigates to application files by their related table, by their class type and by their name.</p>
 	<p>R-IDE helps to navigate to important platform tools, capabilities and documentation needed to create custom applications.</p>
@@ -33,7 +33,7 @@
 	<p>Shortly before the first release of R-IDE the new ServiceNow Studio was released. ServiceNow Studio aims at replacing the classic Studio, App Engine Studio and various other isolated builder tools on the platform. So who needs R-IDE anyway?</p>
 	<p>There is never a single tool that will meet the demands (and the taste) of everyone. So having multiple options to choose from is a value in itself. Further, competition sometimes boosts quality and motivates everyone to build the even better product.</p>
 	<p>The work on R-IDE (then called "ServiceNow IDE" - a name now occupied by the official ServiceNow IDE) started back in May 2023. It was clear for years that the classic Studio would not receive the love it needed. R-IDE was the perfect showcase for a React-based user interface. The Reactor app - which was built to demonstrate how React can be used to create stunning user interfaces on the ServiceNow platform - was initially released in September 2022 - but it yet required a relevant use case to show its real potential.</p>
-	<p>Rebuilding all the capabilities of the classic Studio (and adding even more) is not a project for a single weekend - so it took some time to reach a state in which using R-IDE finally become more efficient for day-to-day development work than classic Studio.</p>
+	<p>Rebuilding all the capabilities of the classic Studio (and adding even more) is not a project for a single weekend - so it took some time to reach a state in which using R-IDE finally became more efficient for day-to-day development work than classic Studio.</p>
 	<p>With the release of ServiceNow Studio in late 2024 a decision had to be made. Keep the work in its then unfinished state or add the missing bits for a real MVP that would not have to shy away from being compared to either classic Studio or the new ServiceNow Studio.</p>
 	<p>It's now up to the ServiceNow community to judge whether R-IDE was a waste of time or a great contribution.</p>
 	<p>Either way: it was fun to build it :D</p>
@@ -126,7 +126,7 @@
 	
 	<h2>Release Notes</h2>
 
-	<h3>1.0.0 - 2024-TODO</h3>
+	<h3>1.0.0 - 2024-12-13</h3>
 	<p>First baselined version</p>
 
 <span style="visibility: hidden;">_CUT_HERE_</span>
@@ -138,13 +138,13 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-28 11:00:29</sys_created_on>
         <sys_id>e229cf4e1b8b6510cd6153d16b4bcb51</sys_id>
-        <sys_mod_count>12</sys_mod_count>
+        <sys_mod_count>15</sys_mod_count>
         <sys_name>manual</sys_name>
         <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_ui_page_e229cf4e1b8b6510cd6153d16b4bcb51</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2024-12-13 11:37:57</sys_updated_on>
+        <sys_updated_on>2024-12-13 12:23:31</sys_updated_on>
     </sys_ui_page>
 </record_update>
