@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_reactor_component">
+    <x_snc_reactor_component action="INSERT_OR_UPDATE">
+        <content_css/>
+        <dependencies>9861d5311bd7e110cd6153d16b4bcb73,9191395fdbd21510f359c191159619ef</dependencies>
+        <description>Select uncommitted files and a commit comment and trigger the commit to the current branch.</description>
+        <jsx>false</jsx>
+        <module>false</module>
+        <name>RIDECommitController</name>
+        <role>controller</role>
+        <script><![CDATA[class RIDECommitController extends ReactorComponent
+{
+	constructor(props)
+	{
+		super(props);
+		this.state = {
+			uncommittedfiles: null
+			state: ''
+		};
+	}
+
+	onServerRequestGetAppUncommittedFiles(aFiles)
+	{
+		this.setState(
+			{
+				uncommittedfiles: aFiles
+			}
+		);
+	}
+
+
+
+	onServerRequestCommit(response)
+	{
+/*		this.setState(
+			{
+				apps: response
+			}
+		);
+		*/
+		DoModalMessage('Commit','complete!',function(){});
+	}	
+	
+/*	onSelectApp(event)
+	{
+		var strAppSysId = GetStringValue(event.target.attributes.value.value);
+		if (IsFunction(this.props.callbackSelectApp) == true)
+		{
+			this.props.callbackSelectApp(strAppSysId);
+		}	
+	}
+*/
+
+	render()
+	{
+		var aUncommittedFiles = GetArrayValue(this.state.uncomittedfiles);
+		if (aUncommittedFiles.length == 0)
+		{
+			ServerRequest(
+				'x_snc_devtools.DevToolsClientAPI',
+				'GetAppUncommittedFiles',
+				{
+					app_sys_id: this.props.app_sys_id
+				},
+				this.onServerRequestGetAppUncommittedFiles);
+
+			return e(Centered,{},e(Waiting,{ text: 'Loading uncomitted files...' }));
+		}
+		
+		var aRows = [];
+		
+		/*
+		var aHeaders = [
+			{
+				header: true,
+				content: 'Name'
+			},
+			{
+				header: true,
+				content: 'Scope'
+			}
+		];
+		aRows.push(aHeaders);
+		*/
+/*
+		for (var nApp = 0; nApp < aApps.length; nApp++)
+		{
+			var app = aApps[nApp];
+			var elementLink = e('a',
+				{
+					onClick: this.onSelectApp,
+					value: app.sys_id
+				},
+				app.name_clean + ' ' + app.version);
+			
+			var aCells = [
+				{ content: elementLink },
+				{ content: app.scope }
+			];
+
+			
+			aRows.push(aCells);
+		}
+		var table = e(TableComponent,{ cells: aRows, classname: 'ride' },null);
+
+		var cancelButton = null;
+		var strAppSysId = GetStringValue(this.props.app_sys_id);
+		if (strAppSysId != '')
+		{
+			cancelButton = e(Button,{ text: 'Cancel', callbackOnClick: this.onCancel});
+		}
+		
+		var aComponents = [];
+		aComponents.push(e('div', { style: { maxHeight: '80vh', overflowY: 'auto' }},table));
+		if (cancelButton != null)
+		{
+			aComponents.push(e('div', { style: { float: 'right', marginTop: '10px'}},cancelButton));
+		}
+		*/
+		
+		//return e('div',{},aComponents);
+		return e('div',{},''+aUncommittedfiles.length);
+	}	
+}]]></script>
+        <source_type>ui_script</source_type>
+        <sys_class_name>x_snc_reactor_component</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-12-14 17:35:21</sys_created_on>
+        <sys_id>b337d7948366da1000d5ccc0deaad333</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>RIDECommitController</sys_name>
+        <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
+        <sys_update_name>x_snc_reactor_component_b337d7948366da1000d5ccc0deaad333</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-12-14 17:35:21</sys_updated_on>
+        <type>script</type>
+        <ui_script display_value="x_snc_ride.RIDECommitController">fbf5df148366da1000d5ccc0deaad389</ui_script>
+        <url/>
+    </x_snc_reactor_component>
+</record_update>

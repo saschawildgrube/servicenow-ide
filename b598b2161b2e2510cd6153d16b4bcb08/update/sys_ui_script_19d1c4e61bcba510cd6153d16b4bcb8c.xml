@@ -204,7 +204,8 @@
 		}	
 		if (strValue == 'repo_commit')
 		{
-			RedirectToUrl('/$studio.do?sysparm_transaction_scope='+this.state.app_data.sys_id,true);
+			this.openTab('repo_commit');
+			//RedirectToUrl('/$studio.do?sysparm_transaction_scope='+this.state.app_data.sys_id,true);
 			return;
 		}		
 		if (strValue == 'repo_apply')
@@ -688,118 +689,114 @@
 			// Content Area
 			var content = null;
 
-			if (strState == 'create_file')
+			var strCurrentTab = GetStringValue(this.state.currenttab);
+			var aTabs = GetArrayValue(this.state.tabs);
+			var metadata = this.state.app_data._metadata;
+
+			var aItems = [];
+			for (var nTab = 0; nTab < aTabs.length; nTab++)
 			{
-				content = e(RIDECreateFileController,
+				var strTab = aTabs[nTab];
+
+				var label = null;
+				var tabcontent = null;
+				if (strTab == 'new')
+				{
+					label = 'Create File';
+					tabcontent = e(RIDECreateFileController,
 					{
 						app_sys_id: strAppSysId,
 						callbackOnCancel: this.onCreateFileCancel,
 						callbackOnFileCreated: this.onCreateFileComplete
 					});
-			}
-			else
-			{
-				var strCurrentTab = GetStringValue(this.state.currenttab);
-				var aTabs = GetArrayValue(this.state.tabs);
-				var metadata = this.state.app_data._metadata;
-
-				var aItems = [];
-				for (var nTab = 0; nTab < aTabs.length; nTab++)
+				}
+				else if (strTab == 'repo_commit')
 				{
-					var strTab = aTabs[nTab];
-
-					var label = null;
-					var tabcontent = null;
-					if (strTab == 'new')
-					{
-						label = 'Create File';
-						tabcontent = e(RIDECreateFileController,
+					label = 'Commit Files';
+					tabcontent = e(RIDECommitController,
 						{
-							app_sys_id: strAppSysId,
-							callbackOnCancel: this.onCreateFileCancel,
-							callbackOnFileCreated: this.onCreateFileComplete
+							app_sys_id: strAppSysId
 						});
-					}
-					else
-					{
-						var aValue = strTab.split(',');
-						var strClassName = GetValue(aValue,0);
-						var strSysId = GetValue(aValue,1);
-						var strContentUrl = '/'+strClassName+'.do?sys_id='+strSysId;
+				}			
+				else
+				{
+					var aValue = strTab.split(',');
+					var strClassName = GetValue(aValue,0);
+					var strSysId = GetValue(aValue,1);
+					var strContentUrl = '/'+strClassName+'.do?sys_id='+strSysId;
 
-						label = strClassName + ' - ' + strSysId;
-						
-						var file = GetValue(metadata,strSysId);
-						if (file != null)
-						{
-							label = e('span',
-								{
-									style: { pointerEvents: 'none' }
-								},
-								[
-									file.display,
-									e('br'),
-									strClassName
-								]);
-
-							if (GetValue(file,'_attributes','separate_browser_tab') == true)
-							{
-								tabcontent =
-									[
-										e(Centered,{},
-											[
-												e('p',{},'This record must be edited in a separate browser tab because for strange reasons the special GUI to be used would not work in an iframe. Don\'t ask!'),
-												e(Button,{
-													text: 'Open in new browser tab',
-													value: strCurrentTab,
-													callbackOnClick: this.onButtonOpenInNewBrowserTab,
-													style: {}
-												})
-											]
-										)
-									];
-							}
-
-						}
-						else if (strSysId == this.state.app_data.sys_id)
-						{
-							label = 'App Settings';
-						}
-						else if (strSysId == this.state.app_data.repo_config_sys_id)
-						{
-							label = 'Repo Config';
-						}
-						if (tabcontent == null)
-						{
-							var iframe = e(IFrame,
-								{
-									url: strContentUrl,
-									callbackOnLoad: this.onTabNavigation
-								});
-							tabcontent = iframe;
-						}
-					}
-
+					label = strClassName + ' - ' + strSysId;
 					
-					aItems.push(
+					var file = GetValue(metadata,strSysId);
+					if (file != null)
+					{
+						label = e('span',
+							{
+								style: { pointerEvents: 'none' }
+							},
+							[
+								file.display,
+								e('br'),
+								strClassName
+							]);
+
+						if (GetValue(file,'_attributes','separate_browser_tab') == true)
 						{
-							label: label,
-							value: strTab,
-							content: tabcontent
+							tabcontent =
+								[
+									e(Centered,{},
+										[
+											e('p',{},'This record must be edited in a separate browser tab because for strange reasons the special GUI to be used would not work in an iframe. Don\'t ask!'),
+											e(Button,{
+												text: 'Open in new browser tab',
+												value: strCurrentTab,
+												callbackOnClick: this.onButtonOpenInNewBrowserTab,
+												style: {}
+											})
+										]
+									)
+								];
 						}
-					);
+
+					}
+					else if (strSysId == this.state.app_data.sys_id)
+					{
+						label = 'App Settings';
+					}
+					else if (strSysId == this.state.app_data.repo_config_sys_id)
+					{
+						label = 'Repo Config';
+					}
+					if (tabcontent == null)
+					{
+						var iframe = e(IFrame,
+							{
+								url: strContentUrl,
+								callbackOnLoad: this.onTabNavigation
+							});
+						tabcontent = iframe;
+					}
 				}
 
-				var tabcontainer = e(TabContainer,
-					{
-						items: aItems,
-						value: strCurrentTab,
-						callbackOnSelect: this.openTab,
-						callbackOnClose: this.closeTab
-					});
 				
-				content = tabcontainer;
+				aItems.push(
+					{
+						label: label,
+						value: strTab,
+						content: tabcontent
+					}
+				);
 			}
+
+			var tabcontainer = e(TabContainer,
+				{
+					items: aItems,
+					value: strCurrentTab,
+					callbackOnSelect: this.openTab,
+					callbackOnClose: this.closeTab
+				});
+			
+			content = tabcontainer;
 	
 
 			// Status Bar
@@ -840,14 +837,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-29 09:47:59</sys_created_on>
         <sys_id>19d1c4e61bcba510cd6153d16b4bcb8c</sys_id>
-        <sys_mod_count>311</sys_mod_count>
+        <sys_mod_count>314</sys_mod_count>
         <sys_name>x_snc_ride.RIDEController</sys_name>
         <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_ui_script_19d1c4e61bcba510cd6153d16b4bcb8c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2024-12-14 14:19:56</sys_updated_on>
+        <sys_updated_on>2024-12-14 17:40:00</sys_updated_on>
         <ui_type>0</ui_type>
         <use_scoped_format>false</use_scoped_format>
         <x_snc_devtools_global>false</x_snc_devtools_global>
