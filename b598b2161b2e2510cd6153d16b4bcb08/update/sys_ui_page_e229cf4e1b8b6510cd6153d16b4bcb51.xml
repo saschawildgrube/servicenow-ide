@@ -89,30 +89,8 @@
 	<h3>React(or) Components</h3>
 	<g2:no_escape>$[x_snc_reactor.HtmlRenderReactorComponents('x_snc_ride')]</g2:no_escape>			
 
-<!--
 	<h3>UI Actions</h3>
 	<g2:no_escape>$[docapi.RenderUIActions()]</g2:no_escape>		
-	
-	<h3>Script Includes</h3>
-	<g2:no_escape>$[docapi.RenderScriptIncludes()]</g2:no_escape>
-	
-	<h3>UI Scripts</h3>
-	<g2:no_escape>$[docapi.RenderUIScripts()]</g2:no_escape>	
-	-->
-	<!--
-	<h3>REST APIs</h3>
-	<g2:no_escape>$[docapi.RenderRestApis()]</g2:no_escape>		
-	-->
-	<!--
-	<h3>Test step configurations</h3>
-	<g2:no_escape>$[docapi.RenderTestStepConfigurations()]</g2:no_escape>
-	
-	<h3>Extension Points</h3>
-	<g2:no_escape>$[docapi.RenderExtensionPoints()]</g2:no_escape>		
-
-	<h3>Business Rules</h3>
-	<g2:no_escape>$[docapi.RenderBusinessRules()]</g2:no_escape>	
-	-->
 
 	<h3>Dependencies</h3>
 	<g2:no_escape>$[docapi.RenderDependencies()]</g2:no_escape>		
@@ -132,6 +110,7 @@
 		<li>Reactor 1.11.0 is now required.</li>
 		<li>The search filter over the tree navigation now has a "Reset Filter" icon button.</li>
 		<li>Committing all uncommitted files to the current branch is now supported.</li>
+		<li>When creating a new application file, the scope for the new file is now set properly.</li>
 		<li>More (secondary) classes are hidden when creating new application files.</li>
 	</ol>
 
@@ -148,13 +127,13 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-28 11:00:29</sys_created_on>
         <sys_id>e229cf4e1b8b6510cd6153d16b4bcb51</sys_id>
-        <sys_mod_count>18</sys_mod_count>
+        <sys_mod_count>20</sys_mod_count>
         <sys_name>manual</sys_name>
         <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_ui_page_e229cf4e1b8b6510cd6153d16b4bcb51</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2024-12-15 14:27:22</sys_updated_on>
+        <sys_updated_on>2024-12-17 15:02:19</sys_updated_on>
     </sys_ui_page>
 </record_update>
