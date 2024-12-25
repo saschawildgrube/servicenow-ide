@@ -27,7 +27,9 @@
 	<p>R-IDE is built with pro-coders in mind who prefer to use and see technical names rather than display names.</p>
 	<p>R-IDE navigates to application files by their related table, by their class type and by their name.</p>
 	<p>R-IDE helps to navigate to important platform tools, capabilities and documentation needed to create custom applications.</p>
-	<p>R-IDE is yet a work-in-progress project. Crucial features like source control operations or code search are not yet fully implemented - so as of now R-IDE has to send you to classic Studio to perform these.</p>
+	<p>R-IDE can create new applications.</p>
+	<p>R-IDE can commit all uncommitted files to the current source control branch.</p>
+	<p>R-IDE is yet a work-in-progress project. Some crucial features like most source control operations or code search are not yet fully implemented - so as of now R-IDE has to send you to classic Studio to perform some activities.</p>
 
 	<h2>But why?</h2>
 	<p>Shortly before the first release of R-IDE the new ServiceNow Studio was released. ServiceNow Studio aims at replacing the classic Studio, App Engine Studio and various other isolated builder tools on the platform. So who needs R-IDE anyway?</p>
@@ -130,13 +132,13 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-28 11:00:29</sys_created_on>
         <sys_id>e229cf4e1b8b6510cd6153d16b4bcb51</sys_id>
-        <sys_mod_count>23</sys_mod_count>
+        <sys_mod_count>24</sys_mod_count>
         <sys_name>manual</sys_name>
         <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_ui_page_e229cf4e1b8b6510cd6153d16b4bcb51</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2024-12-25 18:45:21</sys_updated_on>
+        <sys_updated_on>2024-12-25 19:13:10</sys_updated_on>
     </sys_ui_page>
 </record_update>
