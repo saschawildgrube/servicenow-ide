@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description>Allows to create a new app.</description>
+        <global>false</global>
+        <ignore_in_now_experience>false</ignore_in_now_experience>
+        <name>x_snc_ride.RIDEAppCreateController</name>
+        <script><![CDATA[class RIDEAppCreateController extends ReactorComponent
+{
+	constructor(props)
+	{
+		super(props);
+		this.state = {
+			state: null,
+			app_name: '',
+			app_type: 'scoped',
+			app_scope: '',
+			errors: false
+		};
+	}
+
+	onFormChange(formdata)
+	{
+		this.setState(
+			{
+				app_name: formdata.name,
+				app_type: formdata.type,
+				app_scope: formdata.scope
+			});
+	}
+
+	onCreate()
+	{
+		var strName = this.state.app_name;
+		if (strName == '')
+		{
+			this.setState( { errors: true } );
+			return;
+		}
+		var strType = this.state.app_type;
+		if (strType == 'scoped')
+		{
+			var strScope = this.state.app_scope;
+			if (strScope == '')
+			{
+				this.setState( { errors: true } );
+				return;
+			}
+		}
+		this.setState( { state: 'create'} );
+	}
+
+
+	onCancel()
+	{
+		if (IsFunction(this.props.callbackCancel) == true)
+		{
+			this.props.callbackCancel();
+		}			
+	}
+
+	onServerRequestAppCreate(response)
+	{
+		var strAppSysId = GetStringValue(response);
+		if (IsValidSysId(strAppSysId) == false)
+		{
+			this.setState(
+				{
+					state: 'form',
+					error: 'Failed to create application!'
+				});
+			return;
+		}
+		this.setState(
+			{
+				state: 'form'
+			});
+		if (IsFunction(this.props.callbackOnAppCreated) == true)
+		{
+			this.props.callbackOnAppCreated(strAppSysId);
+		}			
+	}		
+
+	render()
+	{
+		var strState = GetStringValue(this.state.state);
+		if (strState == '')
+		{
+			strState = 'form';
+		}
+
+		if (strState == 'create')
+		{
+			ServerRequest(
+				'x_snc_ride.RIDEClientAPI',
+				'AppCreate',
+				{
+					app_name: this.state.app_name,
+					app_type: this.state.app_type,
+					app_scope: this.state.app_scope,
+				},
+				this.onServerRequestAppCreate);
+			return e(Centered,{},e(Waiting,{ text: 'Creating Application...' }));
+		}
+
+		// state is form
+
+		var aItems = [];
+
+		var componentError = null;
+		var strError = this.state.error;
+		if (strError != '')
+		{
+			componentError = e(ErrorMessage,{ text: strError });
+		}
+
+
+		strError = '';
+
+		if (this.state.errors == true)
+		{
+			if (this.state.app_name == '')
+			{
+				strError = 'Enter an application name!';
+			}
+		}
+
+		aItems.push(
+			{
+				id: 'name',
+				type: 'text',
+				value: this.state.app_name,
+				label: 'Application name',
+				error: strError
+			});
+
+		aItems.push(
+			{
+				id: 'type',
+				type: 'radio',
+				value: this.state.app_type,
+				label: 'Type',
+				options: [
+					{
+						label: 'Scoped',
+						value: 'scoped'
+					},
+					{
+						label: 'Global',
+						value: 'global'
+					}
+				]
+			});	
+
+		if (this.state.app_type == 'scoped')
+		{
+			strError = '';
+			if (this.state.errors == true)
+			{
+				if (this.state.app_scope == '')
+				{
+					strError = 'Enter an application scope!';
+				}
+			}
+
+			aItems.push(
+				{
+					id: 'scope',
+					type: 'text',
+					value: this.state.app_scope,
+					label: 'Scope',
+					error: strError
+				});			
+		}
+
+		var componentForm = e(FormComponent, { items: aItems, callbackOnChange: this.onFormChange });
+			
+		var buttonCreate = e(Button,{ text: 'Create', callbackOnClick: this.onCreate});
+
+		var buttonCancel = null;
+		if (IsFunction(this.props.callbackCancel) == true)
+		{
+			buttonCancel = e(Button,{ text: 'Cancel', callbackOnClick: this.onCancel});
+		}
+
+
+
+/*
+		var tabcontainer = e(TabContainer,
+			{
+				value: strMode,
+				items: aItems
+			});
+
+		*/
+
+		var aComponents = [];
+
+/*
+		aComponents.push(e('div',
+			{
+				style:
+				{
+					height: '85vh',
+					width: '550px'
+				}
+			},
+			tabcontainer));
+*/
+
+		if (componentError != null)
+		{
+			aComponents.push(componentError);
+		}
+
+		aComponents.push(componentForm);		
+
+		if (buttonCancel != null)
+		{
+			aComponents.push(e('div', { style: { float: 'right', marginTop: '40px', marginLeft: '10px'}},buttonCancel));
+		}
+		aComponents.push(e('div', { style: { float: 'right', marginTop: '40px'}},buttonCreate));
+		
+		
+		return e('div',{},aComponents);
+	}	
+}]]></script>
+        <script_name>RIDEAppCreateController</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-12-24 15:55:43</sys_created_on>
+        <sys_id>ac40a26783ea5e5000d5ccc0deaad3a8</sys_id>
+        <sys_mod_count>19</sys_mod_count>
+        <sys_name>x_snc_ride.RIDEAppCreateController</sys_name>
+        <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
+        <sys_update_name>sys_ui_script_ac40a26783ea5e5000d5ccc0deaad3a8</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-12-25 17:27:07</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+        <x_snc_devtools_global>false</x_snc_devtools_global>
+    </sys_ui_script>
+</record_update>
