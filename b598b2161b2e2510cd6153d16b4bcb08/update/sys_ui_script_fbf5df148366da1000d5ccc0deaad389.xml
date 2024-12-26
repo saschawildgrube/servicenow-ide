@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description>Select uncommitted files and a commit comment and trigger the commit to the current branch.</description>
+        <global>false</global>
+        <ignore_in_now_experience>false</ignore_in_now_experience>
+        <name>x_snc_ride.RIDECommitController</name>
+        <script><![CDATA[class RIDECommitController extends ReactorComponent
+{
+	constructor(props)
+	{
+		super(props);
+		this.state = {
+			uncommittedfiles: null,
+			state: '',
+			message: ''
+		};
+		this.startTimer(3000);
+	}
+
+	onServerRequestGetAppUncommittedFiles(aFiles)
+	{
+		this.setState(
+			{
+				uncommittedfiles: aFiles,
+			}
+		);
+	}
+
+	onButtonCommit()
+	{
+		if (this.state.message == '')
+		{
+			DoModalMessage('R-IDE','Please enter a commit message!',function(){});
+			return;
+		}
+		SourceControlCommit(
+			this.props.app_sys_id,
+			this.state.message);
+		this.setState( { state: 'committing' } );
+	}
+
+	onChangeMessage()
+	{
+		var strMessage = GetStringValue(event.target.value);
+		this.setState( { message: strMessage }); 
+	}
+
+	onTimer()
+	{
+		this.updateUncommittedFiles();
+	}
+
+	updateUncommittedFiles()
+	{
+		ServerRequest(
+			'x_snc_devtools.DevToolsClientAPI',
+			'GetAppUncommittedFiles', 
+			{
+				app_sys_id: this.props.app_sys_id
+			},
+			this.onServerRequestGetAppUncommittedFiles);
+	}
+
+	render()
+	{
+		if (this.state.uncommittedfiles == null)
+		{
+			return e(Centered,{},[e(Waiting,{ text: 'Loading uncommitted files...' })]);
+		}
+
+		if (this.state.state == 'committing')
+		{
+			return e('div');
+		}
+
+		var aUncommittedFiles = GetArrayValue(this.state.uncommittedfiles);
+		if (aUncommittedFiles.length == 0)
+		{
+			return e(Centered,{},'There are no uncommitted files at the moment...');
+		}
+
+		var aComponents = [];
+
+		aComponents.push(e('p',{ style: { fontWeight: 'bold' }},'Uncommitted Files'));
+
+		var aRows = [];
+		
+		var aHeaders = [
+			{
+				header: true,
+				content: 'Name'
+			},
+			{
+				header: true,
+				content: 'Class'
+			},			
+			{
+				header: true,
+				content: 'Updated By'
+			},
+			{
+				header: true,
+				content: 'Updated On (UTC)'
+			}
+		];
+		aRows.push(aHeaders);
+		for (var nFile = 0; nFile < aUncommittedFiles.length; nFile++)
+		{
+			var file = aUncommittedFiles[nFile];
+			var aCells = [
+				{ content: file.sys_name },
+				{ content: file.sys_class_name },
+				{ content: file.sys_updated_by },
+				{ content: file.sys_updated_on }
+
+			];
+
+			
+			aRows.push(aCells);
+		}
+		var table = e(TableComponent,{ cells: aRows, classname: 'ride' },null);
+
+		aComponents.push(e('div', { style: { maxHeight: '60vh', overflowY: 'auto' }},table));
+
+		aComponents.push(e('p', { style: { fontWeight: 'bold' }},'Commit Message'));
+		var textareaMessage = e('textarea',
+			{
+				onChange: this.onChangeMessage,
+				style:
+				{
+					width: '100%'
+				}
+			});
+		aComponents.push(textareaMessage);
+
+		var buttonCommit = e(Button,{ text: 'Commit', callbackOnClick: this.onButtonCommit});
+		aComponents.push(buttonCommit);
+
+		return e('div',{ style: { padding: '10px'}},aComponents);
+	}	
+}]]></script>
+        <script_name>RIDECommitController</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-12-14 17:29:14</sys_created_on>
+        <sys_id>fbf5df148366da1000d5ccc0deaad389</sys_id>
+        <sys_mod_count>44</sys_mod_count>
+        <sys_name>x_snc_ride.RIDECommitController</sys_name>
+        <sys_package display_value="R-IDE" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="R-IDE">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
+        <sys_update_name>sys_ui_script_fbf5df148366da1000d5ccc0deaad389</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-12-17 13:43:43</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+        <x_snc_devtools_global>false</x_snc_devtools_global>
+    </sys_ui_script>
+</record_update>

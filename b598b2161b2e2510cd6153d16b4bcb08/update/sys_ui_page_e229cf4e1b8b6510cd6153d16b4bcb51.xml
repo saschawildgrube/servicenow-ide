@@ -27,7 +27,9 @@
 	<p>R-IDE is built with pro-coders in mind who prefer to use and see technical names rather than display names.</p>
 	<p>R-IDE navigates to application files by their related table, by their class type and by their name.</p>
 	<p>R-IDE helps to navigate to important platform tools, capabilities and documentation needed to create custom applications.</p>
-	<p>R-IDE is yet a work-in-progress project. Crucial features like source control operations or code search are not yet fully implemented - so as of now R-IDE has to send you to classic Studio to perform these.</p>
+	<p>R-IDE can create new applications.</p>
+	<p>R-IDE can commit all uncommitted files to the current source control branch.</p>
+	<p>R-IDE is yet a work-in-progress project. Some crucial features like most source control operations or code search are not yet fully implemented - so as of now R-IDE has to send you to classic Studio to perform some activities.</p>
 
 	<h2>But why?</h2>
 	<p>Shortly before the first release of R-IDE the new ServiceNow Studio was released. ServiceNow Studio aims at replacing the classic Studio, App Engine Studio and various other isolated builder tools on the platform. So who needs R-IDE anyway?</p>
@@ -89,30 +91,8 @@
 	<h3>React(or) Components</h3>
 	<g2:no_escape>$[x_snc_reactor.HtmlRenderReactorComponents('x_snc_ride')]</g2:no_escape>			
 
-<!--
 	<h3>UI Actions</h3>
 	<g2:no_escape>$[docapi.RenderUIActions()]</g2:no_escape>		
-	
-	<h3>Script Includes</h3>
-	<g2:no_escape>$[docapi.RenderScriptIncludes()]</g2:no_escape>
-	
-	<h3>UI Scripts</h3>
-	<g2:no_escape>$[docapi.RenderUIScripts()]</g2:no_escape>	
-	-->
-	<!--
-	<h3>REST APIs</h3>
-	<g2:no_escape>$[docapi.RenderRestApis()]</g2:no_escape>		
-	-->
-	<!--
-	<h3>Test step configurations</h3>
-	<g2:no_escape>$[docapi.RenderTestStepConfigurations()]</g2:no_escape>
-	
-	<h3>Extension Points</h3>
-	<g2:no_escape>$[docapi.RenderExtensionPoints()]</g2:no_escape>		
-
-	<h3>Business Rules</h3>
-	<g2:no_escape>$[docapi.RenderBusinessRules()]</g2:no_escape>	
-	-->
 
 	<h3>Dependencies</h3>
 	<g2:no_escape>$[docapi.RenderDependencies()]</g2:no_escape>		
@@ -126,6 +106,21 @@
 	
 	<h2>Release Notes</h2>
 
+	<h3>1.1.0 - 2024-12-26</h3>
+	<ol>
+		<li>DevTools 1.109.0 is now required.</li>
+		<li>Reactor 1.11.0 is now required.</li>
+		<li>Committing all uncommitted files to the current branch is now supported.</li>
+		<li>Creating new applications is now supported.</li>
+		<li>The search filter over the tree navigation now has a "Reset Filter" icon button.</li>
+		<li>When creating a new application file, the scope for the new file is now set properly.</li>
+		<li>When selecting another app the filter is reset.</li>
+		<li>More (secondary) classes are hidden when creating new application files.</li>
+		<li>The attempt to load a non-existent app is now handled properly.</li>
+		<li>Updated documentation and GitHub urls.</li>
+	</ol>
+
+
 	<h3>1.0.0 - 2024-12-13</h3>
 	<p>First baselined version</p>
 
@@ -138,13 +133,13 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-28 11:00:29</sys_created_on>
         <sys_id>e229cf4e1b8b6510cd6153d16b4bcb51</sys_id>
-        <sys_mod_count>15</sys_mod_count>
+        <sys_mod_count>27</sys_mod_count>
         <sys_name>manual</sys_name>
         <sys_package display_value="R-IDE" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="R-IDE">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_ui_page_e229cf4e1b8b6510cd6153d16b4bcb51</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2024-12-13 12:23:31</sys_updated_on>
+        <sys_updated_on>2024-12-26 12:44:35</sys_updated_on>
     </sys_ui_page>
 </record_update>
