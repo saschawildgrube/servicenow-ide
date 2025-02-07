@@ -657,47 +657,6 @@
 					});									
 			}
 
-			// Platform Tools
-/*			tools.push({
-					text: 'Background Script',
-					tooltip: 'Execute background scripts',
-					icon: 'code',
-					value: 'backgroundscript'
-				});
-			tools.push({
-					text: 'Clear Cache',
-					tooltip: 'Clear the cache',
-					icon: 'shower',
-					value: 'clear_cache'
-				});		
-			tools.push({
-					text: 'Active Transactions',
-					tooltip: 'Show all active transactions on all nodes of the instance',
-					icon: 'tasks',
-					value: 'transactions'
-				});						
-			tools.push({
-					text: 'Access Analyzer',
-					tooltip: 'Analyse access based on users, groups and roles to various assets',
-					icon: 'ban',
-					value: 'access_analyzer'
-				});		
-*/
-/*
-			// Documentation
-			tools.push({
-					text: '',
-					tooltip: 'ServiceNow Glide API documentation',
-					icon: 'user-circle',
-					value: 'docs_apiref'
-				});			
-			tools.push({
-					text: '',
-					tooltip: 'Fontawesome 4.0 documentation',
-					icon: 'font-awesome',
-					value: 'docs_fontawesome'
-				});
-*/
 
 			var toolbar = e(ToolBar, { tools: tools, callbackOnClick: this.onToolBar });
 			
@@ -857,7 +816,6 @@
 			var status = e('span',{},strStatus);
 
 			// Side Bar
-
 			var tools = [];
 
 			// Icon Only Toggle
@@ -879,6 +837,13 @@
 						value: 'sidebar_icononly_true'
 				});		
 			}
+			var toolbar_icononly = e(ToolBar,
+				{
+					tools: tools,
+					callbackOnClick: this.onToolBar,
+				});			
+
+			var tools = [];
 
 			// Search
 			tools.push({
@@ -941,7 +906,10 @@
 						paddingTop: '5px'
 					}
 				 },
-				toolstack);
+				[
+					toolbar_icononly,
+					e('div',{ style: { paddingTop: '2px' } }),
+					toolstack]);
 
 			// Assemble the Workspace
 			var workspace = e(Workspace,{
@@ -966,14 +934,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-29 09:47:59</sys_created_on>
         <sys_id>19d1c4e61bcba510cd6153d16b4bcb8c</sys_id>
-        <sys_mod_count>342</sys_mod_count>
+        <sys_mod_count>344</sys_mod_count>
         <sys_name>x_snc_ride.RIDEController</sys_name>
         <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_ui_script_19d1c4e61bcba510cd6153d16b4bcb8c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2025-02-07 19:20:27</sys_updated_on>
+        <sys_updated_on>2025-02-07 19:55:09</sys_updated_on>
         <ui_type>0</ui_type>
         <use_scoped_format>false</use_scoped_format>
         <x_snc_devtools_global>false</x_snc_devtools_global>
