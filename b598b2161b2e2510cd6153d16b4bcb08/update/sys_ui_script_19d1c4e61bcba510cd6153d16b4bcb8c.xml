@@ -29,7 +29,8 @@
 			filter: '',
 			currenttab: strCurrentTab,
 			tabs: aTabs,
-			uncommittedfiles: null
+			uncommittedfiles: null,
+			sidebar_icononly: false
 		};
 
 		this.title = 'R-IDE';
@@ -280,6 +281,24 @@
 				});			
 			return;
 		}*/
+
+		if (strValue == 'sidebar_icononly_false')
+		{
+			this.setState(
+				{
+					sidebar_icononly: false
+				});			
+			return;
+		}	
+		if (strValue == 'sidebar_icononly_true')
+		{
+			this.setState(
+				{
+					sidebar_icononly: true
+				});			
+			return;
+		}	
+
 		DoModalMessage(this.title,'TODO: Not supported toolbar icon...',function(){});
 
 	}
@@ -556,14 +575,14 @@
 					icon: 'plus-circle',
 					value: 'file_create'
 				});
-
+/*
 			tools.push({
 					text: '',
 					tooltip: 'Code Search (via Studio)',
 					icon: 'search',
 					value: 'search'
 				});				
-			
+*/			
 			// Special Application Files
 			if (IsValidSysId(appdata.manual) == true)
 			{
@@ -639,7 +658,7 @@
 			}
 
 			// Platform Tools
-			tools.push({
+/*			tools.push({
 					text: 'Background Script',
 					tooltip: 'Execute background scripts',
 					icon: 'code',
@@ -663,7 +682,8 @@
 					icon: 'ban',
 					value: 'access_analyzer'
 				});		
-
+*/
+/*
 			// Documentation
 			tools.push({
 					text: '',
@@ -677,6 +697,7 @@
 					icon: 'font-awesome',
 					value: 'docs_fontawesome'
 				});
+*/
 
 			var toolbar = e(ToolBar, { tools: tools, callbackOnClick: this.onToolBar });
 			
@@ -835,6 +856,92 @@
 			}
 			var status = e('span',{},strStatus);
 
+			// Side Bar
+
+			var tools = [];
+
+			// Icon Only Toggle
+			if (this.state.sidebar_icononly == true)
+			{
+				tools.push({
+						text: '',
+						tooltip: 'Display tool text labels',
+						icon: 'chevron-left',
+						value: 'sidebar_icononly_false'
+				});		
+			}
+			else
+			{
+				tools.push({
+						text: '',
+						tooltip: 'Hide tool text labels',
+						icon: 'chevron-right',
+						value: 'sidebar_icononly_true'
+				});		
+			}
+
+			// Search
+			tools.push({
+					text: 'Code Search',
+					tooltip: 'Code Search (via Studio)',
+					icon: 'search',
+					value: 'search'
+				});				
+
+			// Platform Tools
+			tools.push({
+					text: 'Background Script',
+					tooltip: 'Execute background scripts',
+					icon: 'code',
+					value: 'backgroundscript'
+				});
+			tools.push({
+					text: 'Clear Cache',
+					tooltip: 'Clear the cache',
+					icon: 'shower',
+					value: 'clear_cache'
+				});		
+			tools.push({
+					text: 'Active Transactions',
+					tooltip: 'Show all active transactions on all nodes of the instance',
+					icon: 'tasks',
+					value: 'transactions'
+				});						
+			tools.push({
+					text: 'Access Analyzer',
+					tooltip: 'Analyse access based on users, groups and roles to various assets',
+					icon: 'ban',
+					value: 'access_analyzer'
+				});		
+
+			// Documentation
+			tools.push({
+					text: 'Reference',
+					tooltip: 'ServiceNow Developer Reference documentation',
+					icon: 'user-circle',
+					value: 'docs_apiref'
+				});			
+			tools.push({
+					text: 'Fontawesome',
+					tooltip: 'Fontawesome 4.0 documentation',
+					icon: 'font-awesome',
+					value: 'docs_fontawesome'
+				});
+
+			var toolstack = e(ToolStack,
+				{
+					tools: tools,
+					callbackOnClick: this.onToolBar,
+					icononly: this.state.sidebar_icononly
+				});
+			var sidebar = e('div',
+				{
+					style: 
+					{
+						paddingTop: '5px'
+					}
+				 },
+				toolstack);
 
 			// Assemble the Workspace
 			var workspace = e(Workspace,{
@@ -845,7 +952,7 @@
 				leftbarheader: leftbarheader,
 				treenavigation: treenavigation,
 				content: content,
-				sidebar: null,
+				sidebar: sidebar,
 				status: status 
 			});
 
@@ -859,14 +966,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-29 09:47:59</sys_created_on>
         <sys_id>19d1c4e61bcba510cd6153d16b4bcb8c</sys_id>
-        <sys_mod_count>333</sys_mod_count>
+        <sys_mod_count>342</sys_mod_count>
         <sys_name>x_snc_ride.RIDEController</sys_name>
         <sys_package display_value="R-IDE WORK IN PROGRESS" source="x_snc_ide">b598b2161b2e2510cd6153d16b4bcb08</sys_package>
         <sys_policy/>
         <sys_scope display_value="R-IDE WORK IN PROGRESS">b598b2161b2e2510cd6153d16b4bcb08</sys_scope>
         <sys_update_name>sys_ui_script_19d1c4e61bcba510cd6153d16b4bcb8c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2025-02-06 22:42:51</sys_updated_on>
+        <sys_updated_on>2025-02-07 19:20:27</sys_updated_on>
         <ui_type>0</ui_type>
         <use_scoped_format>false</use_scoped_format>
         <x_snc_devtools_global>false</x_snc_devtools_global>
